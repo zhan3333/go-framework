@@ -1,4 +1,4 @@
-package Models
+package database
 
 import (
 	"bytes"
@@ -8,11 +8,9 @@ import (
 	"log"
 )
 
-type db struct {
-	Conn *gorm.DB
-}
+var Conn *gorm.DB
 
-func (db *db) Init() {
+func Init() {
 	buffer := bytes.Buffer{}
 	mysqlConfig := config.App.Database.Connections.Mysql
 	buffer.WriteString(mysqlConfig.Username)
@@ -27,13 +25,10 @@ func (db *db) Init() {
 	if err != nil {
 		log.Fatal("Connect mysql failed.", err)
 	}
-	db.Conn = conn
-	db.Conn.LogMode(config.App.Debug)
-	db.Conn.AutoMigrate(&User{})
+	Conn = conn
+	Conn.LogMode(config.App.Debug)
 }
 
-func (db *db) Close() {
-	_ = db.Conn.Close()
+func Close() {
+	Conn.Close()
 }
-
-var DB = db{Conn: nil}

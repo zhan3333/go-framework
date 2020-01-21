@@ -1,45 +1,19 @@
 package config
 
 import (
+	"go-framework/app"
 	"os"
 )
 
-type Mysql struct {
-	Host     string
-	Port     string
-	Username string
-	Password string
-	Database string
-}
-
-type connections struct {
-	Mysql
-}
-
-type redis struct {
-	RedisDefault redisDefault
-}
-
-type redisDefault struct {
-	Host     string
-	Password string
-	Port     string
-	Database int
-}
-
-type database struct {
-	Default     string
-	Connections connections
-	Redis       redis
-}
-
 type Config struct {
-	Name     string
-	Url      string
-	Env      string
-	Debug    bool
-	Host     string
-	Database database
+	Name        string
+	Url         string
+	Env         string
+	Debug       bool
+	Host        string
+	Database    database
+	Filesystems filesystems
+	Logging     logging
 }
 
 var App *Config
@@ -68,6 +42,23 @@ func Init() {
 					Password: DefaultGet("REDIS_PASSWORD", nil).(string),
 					Port:     DefaultGet("REDIS_PORT", 6379).(string),
 					Database: DefaultGetInt("REDIS_DATABASE", 0),
+				},
+			},
+		},
+		filesystems{
+			Default: "local",
+			Cloud:   "",
+			Disks: Disks{
+				Local: Local{
+					Driver: "local",
+					Root:   "app/public",
+				},
+			},
+		},
+		logging{
+			Gin: gin{
+				Log: ginLog{
+					Path: app.StoragePath("/logs/gin.log"),
 				},
 			},
 		},

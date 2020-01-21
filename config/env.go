@@ -14,6 +14,14 @@ func DefaultGet(key string, def interface{}) interface{} {
 	return val
 }
 
+func DefaultGetStr(key string, def string) string {
+	val := os.Getenv(key)
+	if val == "" {
+		return def
+	}
+	return val
+}
+
 func DefaultGetBool(key string, def bool) bool {
 	val := os.Getenv(key)
 	if val == "" {

@@ -2,8 +2,8 @@ package Controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-framework/app/Models"
-	"go-framework/app/Services"
+	"go-framework/app/Models/User"
+	"go-framework/database"
 	"log"
 )
 
@@ -16,7 +16,7 @@ func (UserController userController) Store(c *gin.Context) {
 	name := c.PostForm("name")
 	password := c.PostForm("password")
 	email := c.PostForm("email")
-	if Services.EmailExists(email) {
+	if User.EmailIsExists(email) {
 		c.JSON(200, Response{
 			Code:    1,
 			Message: "Email has been used",
@@ -24,13 +24,13 @@ func (UserController userController) Store(c *gin.Context) {
 		})
 		return
 	}
-	user := Models.User{
+	user := User.User{
 		Name:     name,
 		Email:    email,
 		Password: password,
 	}
 	log.Println(user)
-	Models.DB.Conn.Create(&user)
+	database.Conn.Create(&user)
 	c.JSON(200, Response{
 		Code:    0,
 		Message: "Success",
