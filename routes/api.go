@@ -7,8 +7,8 @@ import (
 
 func Load(router *gin.Engine) {
 	router.GET("/", Controllers.HomeController.Index)
-	user := router.Group("/user")
+	user := router.Group("/users")
 	{
-		user.POST("/", Controllers.UserController.Store)
+		user.POST("", Controllers.UserController.Store)
 	}
 }

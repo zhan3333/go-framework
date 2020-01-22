@@ -2,9 +2,10 @@ package Controllers
 
 import (
 	"github.com/gin-gonic/gin"
+	"go-framework/app/Http/Request"
+	"go-framework/app/Http/Response"
 	"go-framework/app/Models/User"
 	"go-framework/database"
-	"log"
 )
 
 type userController struct {
@@ -13,27 +14,25 @@ type userController struct {
 var UserController = new(userController)
 
 func (UserController userController) Store(c *gin.Context) {
-	name := c.PostForm("name")
-	password := c.PostForm("password")
-	email := c.PostForm("email")
-	if User.EmailIsExists(email) {
-		c.JSON(200, Response{
-			Code:    1,
-			Message: "Email has been used",
-			Body:    nil,
-		})
+	var request Request.UserStoreRequest
+	var err error
+	if err = c.ShouldBindJSON(&request); err != nil {
+		Response.Error(c, err)
+		return
+	}
+	if User.EmailIsExists(request.Email) {
+		Response.Failed(c, "Email has been used", nil)
 		return
 	}
 	user := User.User{
-		Name:     name,
-		Email:    email,
-		Password: password,
+		Name:     request.Name,
+		Email:    request.Email,
+		Password: request.Password,
 	}
-	log.Println(user)
-	database.Conn.Create(&user)
-	c.JSON(200, Response{
-		Code:    0,
-		Message: "Success",
-		Body:    user,
-	})
+	err = database.Conn.Create(&user).Error
+	if err != nil {
+		Response.Error(c, err)
+		return
+	}
+	Response.Success(c, "success", user)
 }
