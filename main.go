@@ -2,13 +2,15 @@ package main
 
 import (
 	"go-framework/bootstrap"
-	"go-framework/config"
+	"go-framework/conf"
+	"go-framework/routes"
 	"log"
 )
 
 func main() {
 	defer bootstrap.Destroy()
-	router := bootstrap.Bootstrap()
-	err := router.Run(config.App.Host)
+	bootstrap.Bootstrap()
+	router := routes.GetRouter()
+	err := router.Run(conf.Conf.Host)
 	log.Println(err)
 }

@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	uuid "github.com/satori/go.uuid"
-	"go-framework/config"
+	"go-framework/conf"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -21,8 +21,8 @@ type storage struct {
 
 func Init(storagePath string) {
 	Storage = storage{
-		AbsPath:  filepath.Join(storagePath, config.App.Filesystems.Disks.Local.Root),
-		DiskName: config.App.Filesystems.Default,
+		AbsPath:  filepath.Join(storagePath, conf.Conf.Filesystems.Disks.Local.Root),
+		DiskName: conf.Conf.Filesystems.Default,
 	}
 }
 
@@ -31,14 +31,8 @@ func (Storage *storage) Disk(diskName string) *storage {
 	return Storage
 }
 
-func (Storage *storage) Store(path string) {}
-
 func (Storage *storage) FullPath(path string) string {
 	return filepath.Join(Storage.AbsPath, path)
-}
-
-func (Storage *storage) Url(path string) {
-
 }
 
 /**
@@ -68,9 +62,12 @@ func (Storage *storage) StoreBase64RandomName(path string, ImgBase64 string) (st
 	fullPath := Storage.FullPath(path)
 	fileName := fmt.Sprintf("%s.jpg", uuid.NewV4().String())
 	filePath := filepath.Join(fullPath, fileName)
-	os.MkdirAll(fullPath, os.ModePerm)
-	err2 := ioutil.WriteFile(filePath, fileContent, 0777)
-	if err2 != nil {
+	err = os.MkdirAll(fullPath, os.ModePerm)
+	if err != nil {
+		return "", err
+	}
+	err = ioutil.WriteFile(filePath, fileContent, 0777)
+	if err != nil {
 		return "", err
 	}
 	return filepath.Join(path, fileName), nil

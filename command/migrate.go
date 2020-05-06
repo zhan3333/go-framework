@@ -9,7 +9,7 @@ import (
 
 var action = flag.String("action", "", "操作类型")
 var name = flag.String("name", "", "文件名称")
-var saveDir = "database/migrations"
+var saveDir = "db/migrations"
 
 func main() {
 	flag.Parse()
