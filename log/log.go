@@ -7,14 +7,20 @@ import (
 	"os"
 )
 
+var f *os.File
+
 func Init() {
 	log.SetFormatter(&log.JSONFormatter{})
 	//i := os.Stdout
-	f, _ := os.Create(app.StoragePath("logs/main.log"))
+	f, _ = os.Create(app.StoragePath("logs/main.log"))
 	log.SetOutput(f)
 	if conf.Conf.Debug {
 		log.SetLevel(log.TraceLevel)
 	} else {
 		log.SetLevel(log.InfoLevel)
 	}
+}
+
+func Close() {
+	_ = f.Close()
 }

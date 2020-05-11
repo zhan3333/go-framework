@@ -8,16 +8,20 @@ import (
 
 type application struct {
 	InTest      bool
+	InCommand   bool
 	AppPath     string
 	TestPath    string
 	StoragePath string
+	IsBootstrap bool
 }
 
 var App = application{
 	InTest:      false,
+	InCommand:   false,
 	AppPath:     "",
 	TestPath:    "",
 	StoragePath: "",
+	IsBootstrap: false,
 }
 
 func Init() {

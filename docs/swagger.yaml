@@ -1,0 +1,52 @@
+definitions:
+  requests.UserStoreRequest:
+    properties:
+      email:
+        example: admin@go-framework.com
+        type: string
+      name:
+        example: zhan
+        type: string
+      password:
+        example: "123456"
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  responses.Response:
+    properties:
+      body:
+        type: object
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: gin framework
+  license:
+    name: none
+  title: go-framework
+  version: "1.0"
+paths:
+  /api/users:
+    post:
+      parameters:
+      - description: 注册信息
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UserStoreRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.Response'
+      summary: 创建新用户
+swagger: "2.0"

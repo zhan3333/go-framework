@@ -1,0 +1,79 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "gin framework",
+        "title": "go-framework",
+        "contact": {},
+        "license": {
+            "name": "none"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/users": {
+            "post": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "创建新用户",
+                "parameters": [
+                    {
+                        "description": "注册信息",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.UserStoreRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.Response"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "requests.UserStoreRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "admin@go-framework.com"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "zhan"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "123456"
+                }
+            }
+        },
+        "responses.Response": {
+            "type": "object",
+            "properties": {
+                "body": {
+                    "type": "object"
+                },
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

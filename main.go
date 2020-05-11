@@ -3,10 +3,14 @@ package main
 import (
 	"go-framework/bootstrap"
 	"go-framework/conf"
-	"go-framework/routes"
+	routes "go-framework/internal/route"
 	"log"
 )
 
+// @title go-framework
+// @version 1.0
+// @description gin framework
+// @license.name none
 func main() {
 	defer bootstrap.Destroy()
 	bootstrap.Bootstrap()
