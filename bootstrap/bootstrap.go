@@ -2,51 +2,60 @@ package bootstrap
 
 import (
 	"go-framework/app"
+	"go-framework/conf"
 	"go-framework/db"
 	"go-framework/db/migrations"
 	"go-framework/db/redis"
+	"go-framework/internal/cron"
 	"go-framework/internal/middleware"
-	"go-framework/internal/route"
+	routes "go-framework/internal/route"
 	"go-framework/internal/validator"
-	"go-framework/log"
+	logInit "go-framework/pkg/glog"
+	"go-framework/storage"
 )
 
 func SetInTest() {
-	app.App.InTest = true
+	app.InTest = true
 }
 
 func SetInCommand() {
-	app.App.InCommand = true
+	app.InConsole = true
 }
 
 // 应用启动入口
 func Bootstrap() {
-	//migrate()
+	conf.Init()
 
-	app.Init()
-
-	log.Init()
-
+	logInit.Init()
+	storage.Init(app.StoragePath)
 	// 注册中间件
 	middleware.Init()
 
-	// 注册路由
-	routes.InitRouter()
+	if !app.RunningInConsole() {
+		// 注册路由
+		routes.InitRouter()
 
-	validator.Init()
+		validator.Init()
+	}
 
 	redis.Init()
 
-	db.Init()
+	_ = db.Init()
 
 	migrate()
 
-	app.App.IsBootstrap = true
+	if !app.RunningInConsole() {
+		// start cron
+		cron.Register()
+		cron.Start()
+	}
+
+	app.IsBootstrap = true
 }
 
 func Destroy() {
 	db.Close()
-	log.Close()
+	logInit.Close()
 	redis.Close()
 }
 

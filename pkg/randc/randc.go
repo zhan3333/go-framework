@@ -1,7 +1,9 @@
 package randc
 
 import (
+	uuid2 "github.com/satori/go.uuid"
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -18,4 +20,8 @@ func RandStringN(n int) string {
 		b[i] = letterRunes[rand.Intn(len(letterRunes))]
 	}
 	return string(b)
+}
+
+func Uuid() string {
+	return strings.ReplaceAll(uuid2.NewV4().String(), "-", "")
 }

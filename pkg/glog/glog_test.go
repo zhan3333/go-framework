@@ -1,4 +1,4 @@
-package log_test
+package glog_test
 
 import (
 	log "github.com/sirupsen/logrus"

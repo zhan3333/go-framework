@@ -10,5 +10,5 @@ import (
 
 func TestVal(t *testing.T) {
 	bootstrap.SetInTest()
-	assert.Equal(t, conf.Conf.Name, os.Getenv("APP_NAME"))
+	assert.Equal(t, conf.Name, os.Getenv("APP_NAME"))
 }

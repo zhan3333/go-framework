@@ -15,6 +15,6 @@ func main() {
 	defer bootstrap.Destroy()
 	bootstrap.Bootstrap()
 	router := routes.GetRouter()
-	err := router.Run(conf.Conf.Host)
+	err := router.Run(conf.Host)
 	log.Println(err)
 }

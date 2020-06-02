@@ -9,7 +9,7 @@ import (
 var client *redis.Client
 
 func Init() {
-	c := conf.Conf.Database.Redis.RedisDefault
+	c := conf.Database.Redis.RedisDefault
 	client = redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%d", c.Host, c.Port),
 		Password: c.Password,

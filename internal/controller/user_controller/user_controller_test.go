@@ -9,7 +9,7 @@ import (
 	"go-framework/internal/controller/user_controller/requests"
 	"go-framework/internal/responses"
 	routes "go-framework/internal/route"
-	"go-framework/tool"
+	"go-framework/pkg/tool"
 	"net/http"
 	"net/http/httptest"
 	"strings"

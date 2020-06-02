@@ -1,13 +1,12 @@
 package conf
 
-type logging struct {
-	Gin gin
-}
+import log "github.com/sirupsen/logrus"
 
-type ginLog struct {
-	Path string
-}
+type logs map[string]Log
 
-type gin struct {
-	Log ginLog
+type Log struct {
+	Driver string
+	Path   string
+	Level  log.Level
+	Days   int
 }

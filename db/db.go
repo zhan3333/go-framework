@@ -4,22 +4,46 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	log "github.com/sirupsen/logrus"
 	"go-framework/conf"
-	"log"
+	"go-framework/pkg/glog"
 	"time"
 )
 
 var Conn *gorm.DB
 
-func Init() {
-	mc := conf.Conf.Database.Connections.Mysql
+type dbConf struct {
+	Username string
+	Password string
+	Host     string
+	Port     string
+	Database string
+}
 
-	Conn = New(mc.Username, mc.Password, mc.Host, mc.Port, mc.Database)
+func (c dbConf) String() string {
+	return fmt.Sprintf("%s:%s@(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local&timeout=15s",
+		c.Username, c.Password, c.Host, c.Port, c.Database)
+}
 
-	Conn.LogMode(conf.Conf.Debug)
+func Init() error {
+	mc := conf.Database.Connections.Mysql
+	c := dbConf{
+		Username: mc.Username,
+		Password: mc.Password,
+		Host:     mc.Host,
+		Port:     mc.Port,
+		Database: mc.Database,
+	}
+	Conn, _ = New(c)
 
+	Conn.LogMode(conf.Debug)
+	Conn.SetLogger(glog.Channel("db"))
+	if err := Conn.DB().Ping(); err != nil {
+		return fmt.Errorf("连接到数据库 %s 失败: [%+v]", c.String(), err)
+	}
 	// 重新连接间隔
 	Conn.DB().SetConnMaxLifetime(60 * time.Second)
+	return nil
 }
 
 func Close() {
@@ -30,12 +54,11 @@ func Close() {
 }
 
 // 创建一个数据库连接
-func New(name string, password string, host string, port string, database string) *gorm.DB {
-	connStr := fmt.Sprintf("%s:%s@(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
-		name, password, host, port, database)
-	conn, err := gorm.Open(conf.Conf.Database.Default, connStr)
+func New(c dbConf) (*gorm.DB, error) {
+	conn, err := gorm.Open(conf.Database.Default, c.String())
 	if err != nil {
-		log.Fatalf("Connect mysql failed: %s", err.Error())
+		log.Errorf("Connect mysql failed: %s", err.Error())
+		return conn, err
 	}
-	return conn
+	return conn, nil
 }

@@ -6,45 +6,36 @@ import (
 	"runtime"
 )
 
-type application struct {
+var (
 	InTest      bool
-	InCommand   bool
-	AppPath     string
+	InConsole   bool
+	Path        string
 	TestPath    string
 	StoragePath string
 	IsBootstrap bool
-}
+)
 
-var App = application{
-	InTest:      false,
-	InCommand:   false,
-	AppPath:     "",
-	TestPath:    "",
-	StoragePath: "",
-	IsBootstrap: false,
+func init() {
+	// 初始化项目的路径
+	Path = GetBasePath()
+	TestPath = fmt.Sprintf("%s/tests", Path)
+	StoragePath = fmt.Sprintf("%s/storage", Path)
 }
-
-func Init() {
-	appPath := GetBasePath()
-	App.AppPath = appPath
-	App.AppPath = fmt.Sprintf("%s/tests", appPath)
-	App.StoragePath = fmt.Sprintf("%s/storage", appPath)
-}
-
-func StoragePath(path string) string {
-	return filepath.Join(App.StoragePath, path)
-}
-
-//func TestPath(path string) string {
-//	return filepath.Join(App.TestPath, path)
-//}
-//
-//func AppPath(path string) string {
-//	return filepath.Join(App.AppPath, path)
-//}
 
 // 获取项目基础路径的绝对值
 func GetBasePath() string {
 	_, b, _, _ := runtime.Caller(0)
 	return filepath.Join(filepath.Dir(b), "../")
+}
+
+func RunningInConsole() bool {
+	return InConsole
+}
+
+func RunningInTest() bool {
+	return InTest
+}
+
+func Booted() bool {
+	return IsBootstrap
 }
