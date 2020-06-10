@@ -29,8 +29,8 @@ var (
 				Database: os.Getenv("DB_DATABASE"),
 			},
 		},
-		Redis: redis{
-			RedisDefault: redisDefault{
+		Redis: map[string]RedisConf{
+			"default": {
 				Host:     env.DefaultGet("REDIS_HOST", "127.0.0.1").(string),
 				Password: env.DefaultGet("REDIS_PASSWORD", "").(string),
 				Port:     env.DefaultGetInt("REDIS_PORT", 6379),

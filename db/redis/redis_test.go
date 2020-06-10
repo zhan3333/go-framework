@@ -4,6 +4,7 @@ import (
 	redis2 "github.com/go-redis/redis/v7"
 	"github.com/stretchr/testify/assert"
 	"go-framework/bootstrap"
+	"go-framework/conf"
 	"go-framework/db/redis"
 	"testing"
 	"time"
@@ -37,4 +38,25 @@ func TestGetSet(t *testing.T) {
 	assert.Equal(t, "", ret2)
 	assert.NotNil(t, err)
 	assert.IsType(t, redis2.Nil, err)
+}
+
+func TestNewConn(t *testing.T) {
+	conf.Database.Redis["new"] = conf.RedisConf{
+		Host:     "127.0.0.1",
+		Password: "",
+		Port:     6379,
+		Database: 0,
+	}
+	pong, err := redis.Conn("new").Ping().Result()
+	assert.Nil(t, err)
+	assert.Equal(t, "PONG", pong)
+}
+
+func TestNotExistsConn(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("The code did not panic")
+		}
+	}()
+	redis.Conn("not_exists")
 }

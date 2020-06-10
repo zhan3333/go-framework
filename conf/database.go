@@ -12,11 +12,7 @@ type connections struct {
 	Mysql
 }
 
-type redis struct {
-	RedisDefault redisDefault
-}
-
-type redisDefault struct {
+type RedisConf struct {
 	Host     string
 	Password string
 	Port     int
@@ -26,5 +22,5 @@ type redisDefault struct {
 type database struct {
 	Default     string
 	Connections connections
-	Redis       redis
+	Redis       map[string]RedisConf
 }
