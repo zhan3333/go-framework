@@ -2,15 +2,15 @@ package env_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go-framework/bootstrap"
+	"go-framework/boot"
 	"go-framework/conf/env"
 	"os"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
-	bootstrap.SetInTest()
-	bootstrap.Bootstrap()
+	boot.SetInTest()
+	boot.Boot()
 	m.Run()
 }
 

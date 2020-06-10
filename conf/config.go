@@ -69,6 +69,11 @@ var (
 				Path:   filepath.Join(app.StoragePath, "logs/db.log"),
 				Level:  log.DebugLevel,
 			},
+			"cron": Log{
+				Driver: "single",
+				Path:   filepath.Join(app.StoragePath, "logs/cron.log"),
+				Level:  log.DebugLevel,
+			},
 		},
 		Default: "single",
 	}

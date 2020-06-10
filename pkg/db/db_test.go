@@ -2,14 +2,14 @@ package db_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go-framework/bootstrap"
+	"go-framework/boot"
 	"go-framework/pkg/db"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
-	bootstrap.Bootstrap()
-	bootstrap.SetInTest()
+	boot.Boot()
+	boot.SetInTest()
 	m.Run()
 }
 

@@ -2,13 +2,13 @@ package glog_test
 
 import (
 	log "github.com/sirupsen/logrus"
-	"go-framework/bootstrap"
+	"go-framework/boot"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
-	bootstrap.SetInTest()
-	bootstrap.Bootstrap()
+	boot.SetInTest()
+	boot.Boot()
 	m.Run()
 }
 

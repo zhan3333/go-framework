@@ -3,14 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	"go-framework/bootstrap"
+	"go-framework/boot"
 	"go-framework/cmd/migrate"
 	"os"
 )
 
 func init() {
-	bootstrap.SetInCommand()
-	bootstrap.Bootstrap()
+	boot.SetInCommand()
+	boot.Boot()
 	flag.Usage = usage
 }
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"go-framework/app"
-	boot "go-framework/bootstrap"
+	"go-framework/boot"
 	"go-framework/storage"
 	"io/ioutil"
 	"log"
@@ -14,7 +14,7 @@ import (
 
 func TestMain(m *testing.M) {
 	boot.SetInTest()
-	boot.Bootstrap()
+	boot.Boot()
 	m.Run()
 }
 

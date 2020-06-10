@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go-framework/bootstrap"
+	"go-framework/boot"
 	"go-framework/conf"
 	routes "go-framework/internal/route"
 	"log"
@@ -12,8 +12,8 @@ import (
 // @description gin framework
 // @license.name none
 func main() {
-	defer bootstrap.Destroy()
-	bootstrap.Bootstrap()
+	defer boot.Destroy()
+	boot.Boot()
 	router := routes.GetRouter()
 	err := router.Run(conf.Host)
 	log.Println(err)

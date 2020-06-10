@@ -5,7 +5,7 @@ import (
 	"github.com/bxcodec/faker/v3"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"go-framework/bootstrap"
+	"go-framework/boot"
 	"go-framework/internal/controller/user_controller/requests"
 	"go-framework/internal/responses"
 	routes "go-framework/internal/route"
@@ -20,8 +20,8 @@ var router *gin.Engine
 var w *httptest.ResponseRecorder
 
 func TestMain(m *testing.M) {
-	bootstrap.SetInTest()
-	bootstrap.Bootstrap()
+	boot.SetInTest()
+	boot.Boot()
 	router = routes.GetRouter()
 	w = httptest.NewRecorder()
 	m.Run()

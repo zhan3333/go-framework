@@ -2,15 +2,15 @@ package migrate_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go-framework/bootstrap"
+	"go-framework/boot"
 	db2 "go-framework/pkg/db"
 	"go-framework/pkg/migrate"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
-	bootstrap.SetInTest()
-	bootstrap.Bootstrap()
+	boot.SetInTest()
+	boot.Boot()
 	m.Run()
 }
 

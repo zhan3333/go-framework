@@ -1,6 +1,7 @@
-package bootstrap
+package boot
 
 import (
+	log "github.com/sirupsen/logrus"
 	"go-framework/app"
 	"go-framework/conf"
 	"go-framework/internal/cron"
@@ -23,7 +24,7 @@ func SetInCommand() {
 }
 
 // 应用启动入口
-func Bootstrap() {
+func Boot() {
 	var err error
 	conf.Init()
 
@@ -61,6 +62,7 @@ func Bootstrap() {
 	}
 
 	app.IsBootstrap = true
+	log.Println("boot success")
 }
 
 func Destroy() {

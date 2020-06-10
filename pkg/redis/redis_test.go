@@ -3,7 +3,7 @@ package redis_test
 import (
 	redis2 "github.com/go-redis/redis/v7"
 	"github.com/stretchr/testify/assert"
-	"go-framework/bootstrap"
+	"go-framework/boot"
 	"go-framework/conf"
 	"go-framework/pkg/redis"
 	"testing"
@@ -11,8 +11,8 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	bootstrap.SetInTest()
-	bootstrap.Bootstrap()
+	boot.SetInTest()
+	boot.Boot()
 	m.Run()
 }
 

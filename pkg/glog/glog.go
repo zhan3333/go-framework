@@ -4,7 +4,6 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"go-framework/conf"
-	"go-framework/pkg/tool"
 	"os"
 )
 
@@ -43,7 +42,6 @@ func loadChannels() {
 
 func configDefaultLog() *log.Logger {
 	if logC, ok := conf.Logging.Channels[conf.Logging.Default]; ok {
-		tool.Dump(logC)
 		l := log.StandardLogger()
 		log.SetFormatter(LocalFormatter{&log.JSONFormatter{
 			DisableHTMLEscape: true,
