@@ -5,7 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go-framework/bootstrap"
 	"go-framework/conf"
-	"go-framework/db/redis"
+	"go-framework/pkg/redis"
 	"testing"
 	"time"
 )

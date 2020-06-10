@@ -1,9 +1,9 @@
-package migrations
+package migrate_file
 
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
-	"go-framework/db"
+	db2 "go-framework/pkg/db"
 )
 
 type CreateUsersTableMigrate struct {
@@ -14,16 +14,16 @@ func (CreateUsersTableMigrate) Key() string {
 }
 
 func (CreateUsersTableMigrate) Up() (err error) {
-	if db.Def().HasTable(User{}.TableName()) {
+	if db2.Def().HasTable(User{}.TableName()) {
 		err = fmt.Errorf("users table alreay exist")
 		return
 	}
-	err = db.Def().CreateTable(&User{}).Error
+	err = db2.Def().CreateTable(&User{}).Error
 	return
 }
 
 func (CreateUsersTableMigrate) Down() (err error) {
-	err = db.Def().DropTableIfExists(&User{}).Error
+	err = db2.Def().DropTableIfExists(&User{}).Error
 	return
 }
 

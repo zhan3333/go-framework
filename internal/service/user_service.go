@@ -1,8 +1,8 @@
 package service
 
 import (
-	"go-framework/db"
 	"go-framework/internal/model"
+	db2 "go-framework/pkg/db"
 )
 
 type UserService struct {
@@ -10,7 +10,7 @@ type UserService struct {
 
 func (UserService) EmailIsExists(email string) bool {
 	user := model.User{}
-	db.Def().Select([]string{"id"}).Where(&model.User{Email: email}).First(&user)
+	db2.Def().Select([]string{"id"}).Where(&model.User{Email: email}).First(&user)
 	if user.ID != 0 {
 		return true
 	}

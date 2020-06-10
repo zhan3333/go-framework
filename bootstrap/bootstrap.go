@@ -3,14 +3,14 @@ package bootstrap
 import (
 	"go-framework/app"
 	"go-framework/conf"
-	"go-framework/db"
-	"go-framework/db/migrations"
-	"go-framework/db/redis"
 	"go-framework/internal/cron"
 	"go-framework/internal/middleware"
 	routes "go-framework/internal/route"
 	"go-framework/internal/validator"
+	"go-framework/migrate_file"
+	db2 "go-framework/pkg/db"
 	logInit "go-framework/pkg/glog"
+	"go-framework/pkg/redis"
 	"go-framework/storage"
 )
 
@@ -46,12 +46,13 @@ func Bootstrap() {
 	}
 
 	// 连接默认数据库
-	_, err = db.InitDef()
+	_, err = db2.InitDef()
 	if err != nil {
 		panic(err)
 	}
 
-	migrate()
+	// load migrate files
+	migrate_file.Init()
 
 	if !app.RunningInConsole() {
 		// start cron
@@ -63,11 +64,7 @@ func Bootstrap() {
 }
 
 func Destroy() {
-	db.Close()
+	db2.Close()
 	logInit.Close()
 	redis.Close()
-}
-
-func migrate() {
-	db.Def().AutoMigrate(&migrations.Migration{})
 }

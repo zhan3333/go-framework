@@ -2,13 +2,13 @@ package migrate
 
 import (
 	"fmt"
-	"go-framework/db/migrations"
+	"go-framework/pkg/migrate"
 )
 
 func Migrate() {
 	var err error
-	mfs := migrations.GetNeedMigrateFiles(migrations.MigrateFiles)
-	nextBatch := migrations.GetNextBatchNo()
+	mfs := migrate.GetNeedMigrateFiles(migrate.Files)
+	nextBatch := migrate.GetNextBatchNo()
 	fmt.Printf("Migrate file has %d \n", len(mfs))
 	if len(mfs) == 0 {
 		fmt.Printf("No Migrate file need migration \n")
@@ -21,7 +21,7 @@ func Migrate() {
 			fmt.Printf("[Migrate failed] %s: %s \n", mf.Key(), err.Error())
 			break
 		}
-		err = migrations.CreateMigrate(mf.Key(), nextBatch)
+		err = migrate.CreateMigrate(mf.Key(), nextBatch)
 		if err != nil {
 			fmt.Printf("[Migrate failed] %s: %s \n", mf.Key(), err.Error())
 			break
@@ -32,7 +32,7 @@ func Migrate() {
 
 func Rollback() {
 	var err error
-	mfs := migrations.GetNeedRollbackKeys(1)
+	mfs := migrate.GetNeedRollbackKeys(1)
 	fmt.Printf("Rollback file has %d \n", len(mfs))
 	if len(mfs) == 0 {
 		fmt.Printf("No Migrate file need Rollback \n")
@@ -45,7 +45,7 @@ func Rollback() {
 			fmt.Printf("[Rollback failed] %s: %s", mf.Key(), err.Error())
 			break
 		}
-		err = migrations.DeleteMigrate(mf.Key())
+		err = migrate.DeleteMigrate(mf.Key())
 		if err != nil {
 			fmt.Printf("[Migrate failed] %s: %s", mf.Key(), err.Error())
 			break

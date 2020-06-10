@@ -3,7 +3,7 @@ package db_test
 import (
 	"github.com/stretchr/testify/assert"
 	"go-framework/bootstrap"
-	"go-framework/db"
+	"go-framework/pkg/db"
 	"testing"
 )
 

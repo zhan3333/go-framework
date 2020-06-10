@@ -1,7 +1,7 @@
-package migrations
+package migrate
 
 import (
-	"go-framework/db"
+	db2 "go-framework/pkg/db"
 )
 
 type Migration struct {
@@ -14,21 +14,24 @@ func (Migration) TableName() string {
 	return "migrations"
 }
 
-type MigrateFile interface {
+type File interface {
 	Key() string
 	Up() error
 	Down() error
 }
 
 // 定义的迁移文件需要在这里注册
-var MigrateFiles = []MigrateFile{
-	CreateUsersTableMigrate{},
+var Files []File
+
+// 注册迁移文件
+func Register(file File) {
+	Files = append(Files, file)
 }
 
 // 获取需要迁移的 migrateFiles
 // files 有, migrations 里没有的数据
-func GetNeedMigrateFiles(migrateFiles []MigrateFile) []MigrateFile {
-	var ans []MigrateFile
+func GetNeedMigrateFiles(migrateFiles []File) []File {
+	var ans []File
 	var ms = GetAllMigrations()
 	diff := map[string]string{}
 	for _, migrateFile := range migrateFiles {
@@ -46,14 +49,14 @@ func GetNeedMigrateFiles(migrateFiles []MigrateFile) []MigrateFile {
 }
 
 // 获取需要回滚的 migrateFiles
-func GetNeedRollbackKeys(step int) []MigrateFile {
-	var ans []MigrateFile
+func GetNeedRollbackKeys(step int) []File {
+	var ans []File
 	var ms = GetAllMigrations()
-	var keyMigrateFile = map[string]MigrateFile{}
+	var keyMigrateFile = map[string]File{}
 	if step < 1 {
 		return ans
 	}
-	for _, migrateFile := range MigrateFiles {
+	for _, migrateFile := range Files {
 		keyMigrateFile[migrateFile.Key()] = migrateFile
 	}
 	cur := 0
@@ -73,16 +76,16 @@ func GetNeedRollbackKeys(step int) []MigrateFile {
 
 // 获取所有迁移记录
 func GetAllMigrations() []Migration {
-	var migrations []Migration
-	db.Def().Order("id desc").Find(&migrations)
-	return migrations
+	var ms []Migration
+	db2.Def().Order("id desc").Find(&ms)
+	return ms
 }
 
 // 获取下一个迁移版本号
 func GetNextBatchNo() uint {
 	m := Migration{}
 	batch := uint(0)
-	db.Def().Order("batch desc").Select("batch").First(&m)
+	db2.Def().Order("batch desc").Select("batch").First(&m)
 	batch = m.Batch + 1
 	return batch
 }
@@ -92,7 +95,7 @@ func CreateMigrate(migration string, batch uint) (err error) {
 		Migration: migration,
 		Batch:     batch,
 	}
-	err = db.Def().Create(&m).Error
+	err = db2.Def().Create(&m).Error
 	return
 }
 
@@ -100,6 +103,6 @@ func DeleteMigrate(migration string) (err error) {
 	m := Migration{
 		Migration: migration,
 	}
-	err = db.Def().Where(&m).Delete(Migration{}).Error
+	err = db2.Def().Where(&m).Delete(Migration{}).Error
 	return
 }
