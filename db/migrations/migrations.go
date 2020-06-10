@@ -74,7 +74,7 @@ func GetNeedRollbackKeys(step int) []MigrateFile {
 // 获取所有迁移记录
 func GetAllMigrations() []Migration {
 	var migrations []Migration
-	db.Conn.Order("id desc").Find(&migrations)
+	db.Def().Order("id desc").Find(&migrations)
 	return migrations
 }
 
@@ -82,7 +82,7 @@ func GetAllMigrations() []Migration {
 func GetNextBatchNo() uint {
 	m := Migration{}
 	batch := uint(0)
-	db.Conn.Order("batch desc").Select("batch").First(&m)
+	db.Def().Order("batch desc").Select("batch").First(&m)
 	batch = m.Batch + 1
 	return batch
 }
@@ -92,7 +92,7 @@ func CreateMigrate(migration string, batch uint) (err error) {
 		Migration: migration,
 		Batch:     batch,
 	}
-	err = db.Conn.Create(&m).Error
+	err = db.Def().Create(&m).Error
 	return
 }
 
@@ -100,6 +100,6 @@ func DeleteMigrate(migration string) (err error) {
 	m := Migration{
 		Migration: migration,
 	}
-	err = db.Conn.Where(&m).Delete(Migration{}).Error
+	err = db.Def().Where(&m).Delete(Migration{}).Error
 	return
 }

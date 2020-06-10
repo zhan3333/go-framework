@@ -17,24 +17,24 @@ func TestMain(m *testing.M) {
 }
 
 func TestPing(t *testing.T) {
-	pong, err := redis.Client().Ping().Result()
+	pong, err := redis.Def().Ping().Result()
 	assert.Nil(t, err)
 	t.Logf("Pong %s", pong)
 }
 
 func TestGetSet(t *testing.T) {
 	// test exists key
-	err := redis.Client().Set("test", "test", 0*time.Second).Err()
+	err := redis.Def().Set("test", "test", 0*time.Second).Err()
 	assert.Nil(t, err)
-	ret, err := redis.Client().Get("test").Result()
+	ret, err := redis.Def().Get("test").Result()
 	assert.Equal(t, "test", ret)
 	assert.Nil(t, err)
 
-	err = redis.Client().Del("test").Err()
+	err = redis.Def().Del("test").Err()
 	assert.Nil(t, err)
 
 	// test not exists key
-	ret2, err := redis.Client().Get("test_no_exists").Result()
+	ret2, err := redis.Def().Get("test_no_exists").Result()
 	assert.Equal(t, "", ret2)
 	assert.NotNil(t, err)
 	assert.IsType(t, redis2.Nil, err)

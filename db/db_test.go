@@ -14,8 +14,15 @@ func TestMain(m *testing.M) {
 }
 
 func TestConn(t *testing.T) {
-	err := db.Init()
+	err := db.Def().DB().Ping()
 	assert.Nil(t, err)
-	err = db.Conn.DB().Ping()
-	assert.Nil(t, err)
+}
+
+func TestNotExistsConn(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("must panic")
+		}
+	}()
+	_ = db.Conn("not_exists").DB().Ping()
 }

@@ -20,7 +20,7 @@ func TestGetAllMigrations(t *testing.T) {
 }
 
 func TestGetNeedMigrateFiles(t *testing.T) {
-	err := db.Conn.Exec("truncate migrations").Error
+	err := db.Def().Exec("truncate migrations").Error
 	assert.Nil(t, err)
 	needMigrateFiles := migrations.GetNeedMigrateFiles(migrations.MigrateFiles)
 	assert.NotNil(t, needMigrateFiles)
@@ -29,14 +29,14 @@ func TestGetNeedMigrateFiles(t *testing.T) {
 		Migration: migrations.MigrateFiles[0].Key(),
 		Batch:     1,
 	}
-	db.Conn.Save(&m)
+	db.Def().Save(&m)
 
 	needMigrateFiles = migrations.GetNeedMigrateFiles(migrations.MigrateFiles)
 	assert.Equal(t, 0, len(needMigrateFiles))
 }
 
 func TestGetNeedRollbackKeys(t *testing.T) {
-	err := db.Conn.Exec("truncate migrations").Error
+	err := db.Def().Exec("truncate migrations").Error
 	assert.Nil(t, err)
 	var needRollbackMs []migrations.MigrateFile
 	needRollbackMs = migrations.GetNeedRollbackKeys(1)
@@ -46,7 +46,7 @@ func TestGetNeedRollbackKeys(t *testing.T) {
 		Migration: migrations.MigrateFiles[0].Key(),
 		Batch:     1,
 	}
-	db.Conn.Create(&m)
+	db.Def().Create(&m)
 
 	needRollbackMs = migrations.GetNeedRollbackKeys(1)
 	assert.Equal(t, 1, len(needRollbackMs))
@@ -55,7 +55,7 @@ func TestGetNeedRollbackKeys(t *testing.T) {
 
 func TestGetNextBatchNo(t *testing.T) {
 	var nextBatch uint
-	err := db.Conn.Exec("truncate migrations").Error
+	err := db.Def().Exec("truncate migrations").Error
 	assert.Nil(t, err)
 	nextBatch = migrations.GetNextBatchNo()
 	assert.Equal(t, uint(1), nextBatch)
@@ -63,7 +63,7 @@ func TestGetNextBatchNo(t *testing.T) {
 		Migration: migrations.MigrateFiles[0].Key(),
 		Batch:     nextBatch,
 	}
-	db.Conn.Create(&m)
+	db.Def().Create(&m)
 
 	nextBatch = migrations.GetNextBatchNo()
 	assert.Equal(t, uint(2), nextBatch)

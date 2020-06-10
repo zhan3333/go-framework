@@ -56,8 +56,8 @@ go run main.go
 - [x] faker
 - [x] cron 定时任务
 - [x] faker
-- [] redis 多连接配置
-- [] mysql 多连接配置
+- [x] redis 多连接配置
+- [x] mysql 多连接配置
 
 ## 相关文档
 

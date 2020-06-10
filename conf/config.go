@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 var (
@@ -19,14 +20,14 @@ var (
 	Debug    = env.DefaultGetBool("DEBUG", false)
 	Host     = os.Getenv("APP_HOST")
 	Database = database{
-		Default: os.Getenv("DB_CONNECTION"),
-		Connections: connections{
-			Mysql{
-				Host:     os.Getenv("DB_HOST"),
-				Port:     os.Getenv("DB_PORT"),
-				Username: os.Getenv("DB_USERNAME"),
-				Password: os.Getenv("DB_PASSWORD"),
-				Database: os.Getenv("DB_DATABASE"),
+		MySQL: map[string]MysqlConf{
+			"default": {
+				Host:        os.Getenv("DB_HOST"),
+				Port:        os.Getenv("DB_PORT"),
+				Username:    os.Getenv("DB_USERNAME"),
+				Password:    os.Getenv("DB_PASSWORD"),
+				Database:    os.Getenv("DB_DATABASE"),
+				MaxLiftTime: time.Second * 60,
 			},
 		},
 		Redis: map[string]RedisConf{

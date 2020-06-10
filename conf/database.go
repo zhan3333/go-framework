@@ -1,15 +1,17 @@
 package conf
 
-type Mysql struct {
-	Host     string
-	Port     string
-	Username string
-	Password string
-	Database string
-}
+import (
+	"fmt"
+	"time"
+)
 
-type connections struct {
-	Mysql
+type MysqlConf struct {
+	Host        string
+	Port        string
+	Username    string
+	Password    string
+	Database    string
+	MaxLiftTime time.Duration
 }
 
 type RedisConf struct {
@@ -19,8 +21,12 @@ type RedisConf struct {
 	Database int
 }
 
+func (c MysqlConf) String() string {
+	return fmt.Sprintf("%s:%s@(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local&timeout=15s",
+		c.Username, c.Password, c.Host, c.Port, c.Database)
+}
+
 type database struct {
-	Default     string
-	Connections connections
-	Redis       map[string]RedisConf
+	MySQL map[string]MysqlConf
+	Redis map[string]RedisConf
 }

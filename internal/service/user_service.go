@@ -10,7 +10,7 @@ type UserService struct {
 
 func (UserService) EmailIsExists(email string) bool {
 	user := model.User{}
-	db.Conn.Select([]string{"id"}).Where(&model.User{Email: email}).First(&user)
+	db.Def().Select([]string{"id"}).Where(&model.User{Email: email}).First(&user)
 	if user.ID != 0 {
 		return true
 	}

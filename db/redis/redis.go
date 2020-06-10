@@ -3,18 +3,14 @@ package redis
 import (
 	"fmt"
 	"github.com/go-redis/redis/v7"
+	log "github.com/sirupsen/logrus"
 	"go-framework/conf"
 )
 
 var connections = map[string]*redis.Client{}
 
-func Init() {
-	var err error
-	// 初始化 default 连接, 其它连接使用时才会连接
-	connections["default"], err = initConn(conf.Database.Redis["default"])
-	if err != nil {
-		panic(fmt.Sprintf("RedisConf init connection default failed: [%+v]", err))
-	}
+func InitDef() (*redis.Client, error) {
+	return initConn(conf.Database.Redis["default"])
 }
 
 func initConn(c conf.RedisConf) (*redis.Client, error) {
@@ -48,15 +44,14 @@ func Conn(name string) *redis.Client {
 }
 
 // Get default connection
-func Client() *redis.Client {
-	if client, ok := connections["default"]; ok {
-		return client
-	}
-	panic("RedisConf need call Init() before use.")
+func Def() *redis.Client {
+	return Conn("default")
 }
 
 func Close() {
-	for _, v := range connections {
-		_ = v.Close()
+	for k, conn := range connections {
+		if err := conn.Close(); err != nil {
+			log.Printf("Close mysql conn %s err: %+v", k, err)
+		}
 	}
 }

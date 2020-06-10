@@ -24,11 +24,13 @@ func SetInCommand() {
 
 // 应用启动入口
 func Bootstrap() {
+	var err error
 	conf.Init()
 
 	logInit.Init()
+
 	storage.Init(app.StoragePath)
-	// 注册中间件
+
 	middleware.Init()
 
 	if !app.RunningInConsole() {
@@ -38,9 +40,16 @@ func Bootstrap() {
 		validator.Init()
 	}
 
-	redis.Init()
+	_, err = redis.InitDef()
+	if err != nil {
+		panic(err)
+	}
 
-	_ = db.Init()
+	// 连接默认数据库
+	_, err = db.InitDef()
+	if err != nil {
+		panic(err)
+	}
 
 	migrate()
 
@@ -60,5 +69,5 @@ func Destroy() {
 }
 
 func migrate() {
-	db.Conn.AutoMigrate(&migrations.Migration{})
+	db.Def().AutoMigrate(&migrations.Migration{})
 }

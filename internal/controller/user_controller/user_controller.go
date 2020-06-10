@@ -31,7 +31,7 @@ func Store(c *gin.Context) {
 		Email:    request.Email,
 		Password: request.Password,
 	}
-	err = db.Conn.Create(&u).Error
+	err = db.Def().Create(&u).Error
 	if err != nil {
 		responses.Error(c, err)
 		return
@@ -47,7 +47,7 @@ func List(c *gin.Context) {
 		return
 	}
 	var users []model.User
-	err = db.Conn.Find(&users).Error
+	err = db.Def().Find(&users).Error
 	if err != nil {
 		responses.Error(c, err)
 		return

@@ -14,16 +14,16 @@ func (CreateUsersTableMigrate) Key() string {
 }
 
 func (CreateUsersTableMigrate) Up() (err error) {
-	if db.Conn.HasTable(User{}.TableName()) {
+	if db.Def().HasTable(User{}.TableName()) {
 		err = fmt.Errorf("users table alreay exist")
 		return
 	}
-	err = db.Conn.CreateTable(&User{}).Error
+	err = db.Def().CreateTable(&User{}).Error
 	return
 }
 
 func (CreateUsersTableMigrate) Down() (err error) {
-	err = db.Conn.DropTableIfExists(&User{}).Error
+	err = db.Def().DropTableIfExists(&User{}).Error
 	return
 }
 

@@ -7,55 +7,56 @@ import (
 	log "github.com/sirupsen/logrus"
 	"go-framework/conf"
 	"go-framework/pkg/glog"
-	"time"
 )
 
-var Conn *gorm.DB
+var connections = map[string]*gorm.DB{}
 
-type dbConf struct {
-	Username string
-	Password string
-	Host     string
-	Port     string
-	Database string
+func InitDef() (*gorm.DB, error) {
+	return InitConn(conf.Database.MySQL["default"])
 }
 
-func (c dbConf) String() string {
-	return fmt.Sprintf("%s:%s@(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local&timeout=15s",
-		c.Username, c.Password, c.Host, c.Port, c.Database)
-}
-
-func Init() error {
-	mc := conf.Database.Connections.Mysql
-	c := dbConf{
-		Username: mc.Username,
-		Password: mc.Password,
-		Host:     mc.Host,
-		Port:     mc.Port,
-		Database: mc.Database,
+func InitConn(c conf.MysqlConf) (*gorm.DB, error) {
+	var conn *gorm.DB
+	var err error
+	conn, err = gorm.Open("mysql", c.String())
+	if err != nil {
+		log.Errorf("Connect mysql failed: %+v", err)
+		return conn, err
 	}
-	Conn, _ = New(c)
-
-	Conn.LogMode(conf.Debug)
-	Conn.SetLogger(glog.Channel("db"))
-	if err := Conn.DB().Ping(); err != nil {
-		return fmt.Errorf("连接到数据库 %s 失败: [%+v]", c.String(), err)
-	}
-	// 重新连接间隔
-	Conn.DB().SetConnMaxLifetime(60 * time.Second)
-	return nil
+	conn.LogMode(conf.Debug)
+	conn.SetLogger(glog.Channel("db"))
+	conn.DB().SetConnMaxLifetime(c.MaxLiftTime)
+	return conn, nil
 }
 
 func Close() {
-	err := Conn.Close()
-	if err != nil {
-		fmt.Printf("Close db conn err: %s", err.Error())
+	for k, conn := range connections {
+		if err := conn.Close(); err != nil {
+			log.Printf("Close mysql conn %s err: %+v", k, err)
+		}
 	}
 }
 
+// get default conn
+func Def() *gorm.DB {
+	return Conn("default")
+}
+
+// get name conn
+func Conn(name string) *gorm.DB {
+	if conn, ok := connections[name]; ok {
+		return conn
+	}
+	if c, ok := conf.Database.MySQL[name]; ok {
+		connections[name], _ = InitConn(c)
+		return connections[name]
+	}
+	panic(fmt.Sprintf("Can't read mysql config: %s", name))
+}
+
 // 创建一个数据库连接
-func New(c dbConf) (*gorm.DB, error) {
-	conn, err := gorm.Open(conf.Database.Default, c.String())
+func New(c conf.MysqlConf) (*gorm.DB, error) {
+	conn, err := gorm.Open("mysql", c.String())
 	if err != nil {
 		log.Errorf("Connect mysql failed: %s", err.Error())
 		return conn, err
