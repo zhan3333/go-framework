@@ -2,8 +2,8 @@ package migrate_test
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/zhan3333/gdb"
 	"go-framework/boot"
-	db2 "go-framework/pkg/db"
 	"go-framework/pkg/migrate"
 	"testing"
 )
@@ -20,7 +20,7 @@ func TestGetAllMigrations(t *testing.T) {
 }
 
 func TestGetNeedMigrateFiles(t *testing.T) {
-	err := db2.Def().Exec("truncate migrations").Error
+	err := gdb.Def().Exec("truncate migrations").Error
 	assert.Nil(t, err)
 	needMigrateFiles := migrate.GetNeedMigrateFiles(migrate.Files)
 	assert.NotNil(t, needMigrateFiles)
@@ -29,14 +29,14 @@ func TestGetNeedMigrateFiles(t *testing.T) {
 		Migration: migrate.Files[0].Key(),
 		Batch:     1,
 	}
-	db2.Def().Save(&m)
+	gdb.Def().Save(&m)
 
 	needMigrateFiles = migrate.GetNeedMigrateFiles(migrate.Files)
 	assert.Equal(t, 0, len(needMigrateFiles))
 }
 
 func TestGetNeedRollbackKeys(t *testing.T) {
-	err := db2.Def().Exec("truncate migrations").Error
+	err := gdb.Def().Exec("truncate migrations").Error
 	assert.Nil(t, err)
 	var needRollbackMs []migrate.File
 	needRollbackMs = migrate.GetNeedRollbackKeys(1)
@@ -46,7 +46,7 @@ func TestGetNeedRollbackKeys(t *testing.T) {
 		Migration: migrate.Files[0].Key(),
 		Batch:     1,
 	}
-	db2.Def().Create(&m)
+	gdb.Def().Create(&m)
 
 	needRollbackMs = migrate.GetNeedRollbackKeys(1)
 	assert.Equal(t, 1, len(needRollbackMs))
@@ -55,7 +55,7 @@ func TestGetNeedRollbackKeys(t *testing.T) {
 
 func TestGetNextBatchNo(t *testing.T) {
 	var nextBatch uint
-	err := db2.Def().Exec("truncate migrations").Error
+	err := gdb.Def().Exec("truncate migrations").Error
 	assert.Nil(t, err)
 	nextBatch = migrate.GetNextBatchNo()
 	assert.Equal(t, uint(1), nextBatch)
@@ -63,7 +63,7 @@ func TestGetNextBatchNo(t *testing.T) {
 		Migration: migrate.Files[0].Key(),
 		Batch:     nextBatch,
 	}
-	db2.Def().Create(&m)
+	gdb.Def().Create(&m)
 
 	nextBatch = migrate.GetNextBatchNo()
 	assert.Equal(t, uint(2), nextBatch)

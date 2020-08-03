@@ -1,7 +1,7 @@
 package migrate
 
 import (
-	db2 "go-framework/pkg/db"
+	"github.com/zhan3333/gdb"
 )
 
 type Migration struct {
@@ -77,7 +77,7 @@ func GetNeedRollbackKeys(step int) []File {
 // 获取所有迁移记录
 func GetAllMigrations() []Migration {
 	var ms []Migration
-	db2.Def().Order("id desc").Find(&ms)
+	gdb.Def().Order("id desc").Find(&ms)
 	return ms
 }
 
@@ -85,7 +85,7 @@ func GetAllMigrations() []Migration {
 func GetNextBatchNo() uint {
 	m := Migration{}
 	batch := uint(0)
-	db2.Def().Order("batch desc").Select("batch").First(&m)
+	gdb.Def().Order("batch desc").Select("batch").First(&m)
 	batch = m.Batch + 1
 	return batch
 }
@@ -95,7 +95,7 @@ func CreateMigrate(migration string, batch uint) (err error) {
 		Migration: migration,
 		Batch:     batch,
 	}
-	err = db2.Def().Create(&m).Error
+	err = gdb.Def().Create(&m).Error
 	return
 }
 
@@ -103,6 +103,6 @@ func DeleteMigrate(migration string) (err error) {
 	m := Migration{
 		Migration: migration,
 	}
-	err = db2.Def().Where(&m).Delete(Migration{}).Error
+	err = gdb.Def().Where(&m).Delete(Migration{}).Error
 	return
 }

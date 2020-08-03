@@ -2,6 +2,7 @@ package boot
 
 import (
 	log "github.com/sirupsen/logrus"
+	"github.com/zhan3333/gdb"
 	"go-framework/app"
 	"go-framework/conf"
 	"go-framework/internal/cron"
@@ -9,7 +10,6 @@ import (
 	routes "go-framework/internal/route"
 	"go-framework/internal/validator"
 	"go-framework/migrate_file"
-	db2 "go-framework/pkg/db"
 	logInit "go-framework/pkg/glog"
 	"go-framework/pkg/redis"
 	"go-framework/storage"
@@ -27,6 +27,7 @@ func SetInCommand() {
 func Boot() {
 	var err error
 	conf.Init()
+	gdb.ConnConfigs = conf.Database.MySQL
 
 	logInit.Init()
 
@@ -46,12 +47,6 @@ func Boot() {
 		panic(err)
 	}
 
-	// 连接默认数据库
-	_, err = db2.InitDef()
-	if err != nil {
-		panic(err)
-	}
-
 	// load migrate files
 	migrate_file.Init()
 
@@ -66,7 +61,6 @@ func Boot() {
 }
 
 func Destroy() {
-	db2.Close()
 	logInit.Close()
 	redis.Close()
 }

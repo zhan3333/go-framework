@@ -3,6 +3,8 @@ package conf
 import (
 	gin2 "github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"github.com/zhan3333/gdb"
+	_ "github.com/zhan3333/gdb"
 	"go-framework/app"
 	"go-framework/conf/env"
 	_ "go-framework/conf/env"
@@ -20,7 +22,7 @@ var (
 	Debug    = env.DefaultGetBool("DEBUG", false)
 	Host     = os.Getenv("APP_HOST")
 	Database = database{
-		MySQL: map[string]MysqlConf{
+		MySQL: map[string]gdb.MysqlConf{
 			"default": {
 				Host:        os.Getenv("DB_HOST"),
 				Port:        os.Getenv("DB_PORT"),
@@ -28,6 +30,7 @@ var (
 				Password:    os.Getenv("DB_PASSWORD"),
 				Database:    os.Getenv("DB_DATABASE"),
 				MaxLiftTime: time.Second * 60,
+				LogMode:     env.DefaultGetBool("DB_LOG_MODE", true),
 			},
 		},
 		Redis: map[string]RedisConf{

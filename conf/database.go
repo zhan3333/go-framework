@@ -1,18 +1,8 @@
 package conf
 
 import (
-	"fmt"
-	"time"
+	"github.com/zhan3333/gdb"
 )
-
-type MysqlConf struct {
-	Host        string
-	Port        string
-	Username    string
-	Password    string
-	Database    string
-	MaxLiftTime time.Duration
-}
 
 type RedisConf struct {
 	Host     string
@@ -21,12 +11,7 @@ type RedisConf struct {
 	Database int
 }
 
-func (c MysqlConf) String() string {
-	return fmt.Sprintf("%s:%s@(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local&timeout=15s",
-		c.Username, c.Password, c.Host, c.Port, c.Database)
-}
-
 type database struct {
-	MySQL map[string]MysqlConf
+	MySQL map[string]gdb.MysqlConf
 	Redis map[string]RedisConf
 }

@@ -2,9 +2,9 @@ package user_controller
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/zhan3333/gdb"
 	"go-framework/internal/controller/user_controller/requests"
 	"go-framework/internal/responses"
-	db2 "go-framework/pkg/db"
 
 	"go-framework/internal/model"
 	"go-framework/internal/service"
@@ -31,7 +31,7 @@ func Store(c *gin.Context) {
 		Email:    request.Email,
 		Password: request.Password,
 	}
-	err = db2.Def().Create(&u).Error
+	err = gdb.Def().Create(&u).Error
 	if err != nil {
 		responses.Error(c, err)
 		return
@@ -47,7 +47,7 @@ func List(c *gin.Context) {
 		return
 	}
 	var users []model.User
-	err = db2.Def().Find(&users).Error
+	err = gdb.Def().Find(&users).Error
 	if err != nil {
 		responses.Error(c, err)
 		return
