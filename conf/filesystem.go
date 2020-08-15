@@ -14,3 +14,14 @@ type Local struct {
 	Driver string
 	Root   string
 }
+
+var Filesystems = filesystems{
+	Default: "local",
+	Cloud:   "",
+	Disks: Disks{
+		Local: Local{
+			Driver: "local",
+			Root:   "app/public",
+		},
+	},
+}

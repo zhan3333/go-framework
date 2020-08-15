@@ -3,7 +3,7 @@ package cron
 import (
 	cron2 "github.com/robfig/cron/v3"
 	log "github.com/sirupsen/logrus"
-	"go-framework/pkg/glog"
+	"github.com/zhan3333/glog"
 )
 
 var C *cron2.Cron

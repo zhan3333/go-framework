@@ -11,4 +11,5 @@ import (
 func TestVal(t *testing.T) {
 	boot.SetInTest()
 	assert.Equal(t, conf.Name, os.Getenv("APP_NAME"))
+	assert.True(t, conf.Debug)
 }

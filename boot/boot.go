@@ -1,8 +1,8 @@
 package boot
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/zhan3333/gdb"
+	"github.com/zhan3333/glog"
 	"go-framework/app"
 	"go-framework/conf"
 	"go-framework/internal/cron"
@@ -10,7 +10,6 @@ import (
 	routes "go-framework/internal/route"
 	"go-framework/internal/validator"
 	"go-framework/migrate_file"
-	logInit "go-framework/pkg/glog"
 	"go-framework/pkg/redis"
 	"go-framework/storage"
 )
@@ -29,7 +28,9 @@ func Boot() {
 	conf.Init()
 	gdb.ConnConfigs = conf.Database.MySQL
 
-	logInit.Init()
+	glog.DefLogChannel = conf.Logging.Default
+	glog.LogConfigs = conf.Logging.Channels
+	glog.LoadChannels()
 
 	storage.Init(app.StoragePath)
 
@@ -57,10 +58,10 @@ func Boot() {
 	}
 
 	app.IsBootstrap = true
-	log.Println("boot success")
+	glog.Def().Println("boot success")
 }
 
 func Destroy() {
-	logInit.Close()
+	glog.Close()
 	redis.Close()
 }
