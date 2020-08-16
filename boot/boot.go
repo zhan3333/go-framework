@@ -1,8 +1,10 @@
 package boot
 
 import (
+	"fmt"
 	"github.com/zhan3333/gdb"
 	"github.com/zhan3333/glog"
+	"github.com/zhan3333/go-migrate"
 	"github.com/zhan3333/gredis"
 	"go-framework/app"
 	"go-framework/conf"
@@ -45,7 +47,11 @@ func Boot() {
 	}
 
 	// load migrate files
-	migrate_file.Init()
+	migrate.DB = gdb.Def()
+	if err := migrate.InitMigrationTable(); err != nil {
+		panic(fmt.Sprintf("migrate.InitMigrationTable() failed: %+v", err))
+	}
+	migrate.Register(&migrate_file.CreateUsersTableMigrate{})
 
 	if !app.RunningInConsole() {
 		// start cron

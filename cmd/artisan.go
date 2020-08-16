@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/zhan3333/go-migrate"
 	"go-framework/boot"
-	"go-framework/cmd/migrate"
 	"os"
 )
 
@@ -15,6 +15,7 @@ func init() {
 }
 
 func main() {
+	var err error
 	flag.Parse()
 	var cmd string
 	if len(os.Args) > 1 {
@@ -22,16 +23,20 @@ func main() {
 	}
 	switch cmd {
 	case "migrate":
-		if len(os.Args) < 2 {
+		if len(os.Args) <= 2 {
 			fmt.Printf("Err: Migrate 命令需要 action 参数 \n")
 			return
 		}
 		action := os.Args[2]
 		if action == "migrate" {
-			migrate.Migrate()
+			if err = migrate.Migrate(1); err != nil {
+				fmt.Printf("migrate failed: %+v\n", err)
+			}
 		}
 		if action == "rollback" {
-			migrate.Rollback()
+			if err = migrate.Rollback(1); err != nil {
+				fmt.Printf("rollback failed: %+v\n", err)
+			}
 		}
 	default:
 		flag.Usage()

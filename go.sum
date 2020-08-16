@@ -65,6 +65,8 @@ github.com/hpcloud/tail v1.0.0/go.mod h1:ab1qPbhIpdTxEkNHXyeSf5vhxWSCs/tWer42PpO
 github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869/go.mod h1:cJ6Cj7dQo+O6GJNiMx+Pa94qKj+TG8ONdKHgMNIyyag=
 github.com/jinzhu/gorm v1.9.15 h1:OdR1qFvtXktlxk73XFYMiYn9ywzTwytqe4QkuMRqc38=
 github.com/jinzhu/gorm v1.9.15/go.mod h1:G3LB3wezTOWM2ITLzPxEXgSkOXAntiLHS7UdBefADcs=
+github.com/jinzhu/gorm v1.9.16 h1:+IyIjPEABKRpsu/F8OvDPy9fyQlgsg2luMV2ZIH5i5o=
+github.com/jinzhu/gorm v1.9.16/go.mod h1:G3LB3wezTOWM2ITLzPxEXgSkOXAntiLHS7UdBefADcs=
 github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=
 github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
 github.com/jinzhu/now v1.0.1/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/z8=
@@ -152,6 +154,8 @@ github.com/zhan3333/gdb v0.0.0-20200815150531-adc900d76d44 h1:T6PCRdoboUzwY73abF
 github.com/zhan3333/gdb v0.0.0-20200815150531-adc900d76d44/go.mod h1:Lj+8OVtGpXHtS47k3AHdaFg6KRcuYr/F+2Yy3t3o0KE=
 github.com/zhan3333/glog v0.0.0-20200815144431-157c6e9203d6 h1:zkmbkhbziKLSiIA1r711svGfAgLZ5agIqBYb3qHdAgA=
 github.com/zhan3333/glog v0.0.0-20200815144431-157c6e9203d6/go.mod h1:ztnUaRLg3i3xRLAVOo/eTeA/ov1XbRXdYatnyouPqg0=
+github.com/zhan3333/go-migrate v0.0.0-20200816103434-16fe8d023b1d h1:YZl7nY8Ka0McypGsEUcRtQ7EVQHedXY7Ujax1KTFya0=
+github.com/zhan3333/go-migrate v0.0.0-20200816103434-16fe8d023b1d/go.mod h1:Ouyuv2TW3UJJozsP79JurajI5syIiinWRMostLq5MpI=
 github.com/zhan3333/gredis v0.0.0-20200816030454-c5ff23f64b63 h1:pSUk8BANUtuZDtP74dXq874I1SvVf4an8GkZxf4hnoI=
 github.com/zhan3333/gredis v0.0.0-20200816030454-c5ff23f64b63/go.mod h1:gjZ0lcA9jO+GrNBXHULG93nMsGPxE4JqKFOoG/YY5hc=
 golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
