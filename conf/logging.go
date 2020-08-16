@@ -1,7 +1,6 @@
 package conf
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/zhan3333/glog"
 	"go-framework/app"
 	"path/filepath"
@@ -15,22 +14,22 @@ var Logging = struct {
 		glog.DefLogChannel: {
 			Driver: glog.SINGLE,
 			Path:   filepath.Join(app.StoragePath, "logs/main.log"),
-			Level:  log.DebugLevel,
+			Level:  glog.DebugLevel,
 		},
 		"gin": {
 			Driver: glog.SINGLE,
 			Path:   filepath.Join(app.StoragePath, "logs/route.log"),
-			Level:  log.DebugLevel,
+			Level:  glog.DebugLevel,
 		},
 		"db": {
 			Driver: glog.SINGLE,
 			Path:   filepath.Join(app.StoragePath, "logs/db.log"),
-			Level:  log.DebugLevel,
+			Level:  glog.DebugLevel,
 		},
 		"cron": {
 			Driver: glog.SINGLE,
 			Path:   filepath.Join(app.StoragePath, "logs/cron.log"),
-			Level:  log.DebugLevel,
+			Level:  glog.DebugLevel,
 		},
 	},
 	Default: glog.DefLogChannel,

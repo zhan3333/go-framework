@@ -3,6 +3,7 @@ package boot
 import (
 	"github.com/zhan3333/gdb"
 	"github.com/zhan3333/glog"
+	"github.com/zhan3333/gredis"
 	"go-framework/app"
 	"go-framework/conf"
 	"go-framework/internal/cron"
@@ -10,7 +11,6 @@ import (
 	routes "go-framework/internal/route"
 	"go-framework/internal/validator"
 	"go-framework/migrate_file"
-	"go-framework/pkg/redis"
 	"go-framework/storage"
 )
 
@@ -24,13 +24,14 @@ func SetInCommand() {
 
 // 应用启动入口
 func Boot() {
-	var err error
 	conf.Init()
 	gdb.ConnConfigs = conf.Database.MySQL
 
 	glog.DefLogChannel = conf.Logging.Default
 	glog.LogConfigs = conf.Logging.Channels
 	glog.LoadChannels()
+
+	gredis.Configs = conf.Database.Redis
 
 	storage.Init(app.StoragePath)
 
@@ -41,11 +42,6 @@ func Boot() {
 		routes.InitRouter()
 
 		validator.Init()
-	}
-
-	_, err = redis.InitDef()
-	if err != nil {
-		panic(err)
 	}
 
 	// load migrate files
@@ -63,5 +59,6 @@ func Boot() {
 
 func Destroy() {
 	glog.Close()
-	redis.Close()
+	gdb.Close()
+	gredis.Close()
 }
