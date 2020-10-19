@@ -3,8 +3,13 @@ package migrate_file
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
+	"github.com/zhan3333/go-migrate"
 	"go-framework/internal/model"
 )
+
+func init() {
+	migrate.Register(&CreateUsersTableMigrate{})
+}
 
 type CreateUsersTableMigrate struct {
 }
