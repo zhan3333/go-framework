@@ -12,7 +12,7 @@ import (
 	"go-framework/internal/middleware"
 	routes "go-framework/internal/route"
 	"go-framework/internal/validator"
-	"go-framework/migrate_file"
+	_ "go-framework/migrate_file"
 	"go-framework/storage"
 )
 
@@ -51,7 +51,6 @@ func Boot() {
 	if err := migrate.InitMigrationTable(); err != nil {
 		panic(fmt.Sprintf("migrate.InitMigrationTable() failed: %+v", err))
 	}
-	migrate.Register(&migrate_file.CreateUsersTableMigrate{})
 
 	if !app.RunningInConsole() {
 		// start cron
