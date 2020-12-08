@@ -10,20 +10,22 @@ require (
 	github.com/go-playground/universal-translator v0.16.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/joho/godotenv v1.3.0
+	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible // indirect
 	github.com/mailru/easyjson v0.7.1
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/satori/go.uuid v1.2.0
-	github.com/sirupsen/logrus v1.6.0
+	github.com/sirupsen/logrus v1.7.0
 	github.com/skip2/go-qrcode v0.0.0-20200526175731-7ac0b40b2038
 	github.com/stretchr/testify v1.6.1
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.5
-	github.com/zhan3333/gdb v0.0.0-20200815150531-adc900d76d44
-	github.com/zhan3333/glog v0.0.0-20200815144431-157c6e9203d6
+	github.com/zhan3333/gdb v0.0.0-20201208070438-2ac6406c9fcd
+	github.com/zhan3333/gdb/v2 v2.0.0-alpha.1
+	github.com/zhan3333/glog v1.0.0
 	github.com/zhan3333/go-migrate v0.0.0-20200816103434-16fe8d023b1d
 	github.com/zhan3333/gredis v0.0.0-20200816030454-c5ff23f64b63
-	google.golang.org/appengine v1.4.0 // indirect
+	golang.org/x/sys v0.0.0-20201207223542-d4d67f95c62d // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.1
 )

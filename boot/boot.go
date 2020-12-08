@@ -2,7 +2,7 @@ package boot
 
 import (
 	"fmt"
-	"github.com/zhan3333/gdb"
+	"github.com/zhan3333/gdb/v2"
 	"github.com/zhan3333/glog"
 	"github.com/zhan3333/go-migrate"
 	"github.com/zhan3333/gredis"
@@ -26,12 +26,17 @@ func SetInCommand() {
 
 // 应用启动入口
 func Boot() {
+	var err error
 	conf.Init()
-	gdb.ConnConfigs = conf.Database.MySQL
 
 	glog.DefLogChannel = conf.Logging.Default
 	glog.LogConfigs = conf.Logging.Channels
 	glog.LoadChannels()
+
+	gdb.ConnConfigs = conf.Database.MySQL
+	if err = gdb.InitAll(); err != nil {
+		glog.Def().Panicf("init gdb module failed: %+v", err)
+	}
 
 	gredis.Configs = conf.Database.Redis
 
@@ -47,7 +52,7 @@ func Boot() {
 	}
 
 	// load migrate files
-	migrate.DB = gdb.Def()
+	migrate.DB = gdb.Def().DB
 	if err := migrate.InitMigrationTable(); err != nil {
 		panic(fmt.Sprintf("migrate.InitMigrationTable() failed: %+v", err))
 	}

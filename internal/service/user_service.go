@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/zhan3333/gdb"
+	"github.com/zhan3333/gdb/v2"
 	"go-framework/internal/model"
 )
 

@@ -2,7 +2,7 @@ package user_controller
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/zhan3333/gdb"
+	"github.com/zhan3333/gdb/v2"
 	"go-framework/internal/controller/user_controller/requests"
 	"go-framework/internal/responses"
 
