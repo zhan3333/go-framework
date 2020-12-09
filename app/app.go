@@ -12,7 +12,8 @@ var (
 	Path        string
 	TestPath    string
 	StoragePath string
-	IsBootstrap bool
+	// 是否引导完毕
+	Booted bool
 )
 
 func init() {
@@ -36,6 +37,6 @@ func RunningInTest() bool {
 	return InTest
 }
 
-func Booted() bool {
-	return IsBootstrap
+func IsBooted() bool {
+	return Booted
 }

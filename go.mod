@@ -21,11 +21,13 @@ require (
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.6.5
-	github.com/zhan3333/gdb v0.0.0-20201208070438-2ac6406c9fcd
+	github.com/zhan3333/gdb v0.0.0-20201208070438-2ac6406c9fcd // indirect
 	github.com/zhan3333/gdb/v2 v2.0.0-alpha.1
-	github.com/zhan3333/glog v1.0.0
+	github.com/zhan3333/glog v1.0.0-alpha.2
 	github.com/zhan3333/go-migrate v0.0.0-20200816103434-16fe8d023b1d
+	github.com/zhan3333/go-migrate/v2 v2.0.0-alpha.1
 	github.com/zhan3333/gredis v0.0.0-20200816030454-c5ff23f64b63
 	golang.org/x/sys v0.0.0-20201207223542-d4d67f95c62d // indirect
 	gopkg.in/go-playground/validator.v9 v9.29.1
+	gorm.io/gorm v1.20.8
 )

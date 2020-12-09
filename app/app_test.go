@@ -27,7 +27,7 @@ func TestRunningInTest(t *testing.T) {
 }
 
 func TestBooted(t *testing.T) {
-	assert.False(t, app.Booted())
-	app.IsBootstrap = true
-	assert.True(t, app.Booted())
+	assert.False(t, app.IsBooted())
+	app.Booted = true
+	assert.True(t, app.IsBooted())
 }

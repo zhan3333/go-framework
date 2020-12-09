@@ -4,25 +4,27 @@ import (
 	"github.com/zhan3333/gdb/v2"
 	"github.com/zhan3333/gredis"
 	"go-framework/conf/env"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"log"
 	"os"
 	"time"
 )
 
 type database struct {
-	MySQL map[string]gdb.MysqlConf
+	MySQL map[string]gdb.MySQLConf
 	Redis map[string]gredis.Conf
 }
 
 var Database = database{
-	MySQL: map[string]gdb.MysqlConf{
+	MySQL: map[string]gdb.MySQLConf{
 		gdb.DefaultName: {
-			Host:        os.Getenv("DB_HOST"),
-			Port:        os.Getenv("DB_PORT"),
-			Username:    os.Getenv("DB_USERNAME"),
-			Password:    os.Getenv("DB_PASSWORD"),
-			Database:    os.Getenv("DB_DATABASE"),
-			MaxLiftTime: time.Second * 60,
-			LogMode:     env.DefaultGetBool("DB_LOG_MODE", true),
+			Host:       os.Getenv("DB_HOST"),
+			Port:       os.Getenv("DB_PORT"),
+			Username:   os.Getenv("DB_USERNAME"),
+			Password:   os.Getenv("DB_PASSWORD"),
+			Database:   os.Getenv("DB_DATABASE"),
+			GORMConfig: &gorm.Config{},
 		},
 	},
 	Redis: map[string]gredis.Conf{
@@ -33,4 +35,20 @@ var Database = database{
 			Database: env.DefaultGetInt("REDIS_DATABASE", 0),
 		},
 	},
+}
+
+func init() {
+	if env.DefaultGetBool("DB_LOG", true) {
+		Database.MySQL[gdb.DefaultName].GORMConfig.Logger = logger.New(
+			// 使用 glog 记录, 需要关闭日志配置的 format
+			// glog.Def(),
+			// 输出到屏幕, 可以开启颜色选项
+			log.New(os.Stdout, "", log.LstdFlags),
+			logger.Config{
+				SlowThreshold: time.Second, // 慢 SQL 阈值
+				LogLevel:      logger.Info, // Log level
+				Colorful:      true,        // 彩色打印
+			},
+		)
+	}
 }

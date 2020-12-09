@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/zhan3333/gdb/v2"
 	"github.com/zhan3333/glog"
-	"github.com/zhan3333/go-migrate"
+	"github.com/zhan3333/go-migrate/v2"
 	"github.com/zhan3333/gredis"
 	"go-framework/app"
 	"go-framework/conf"
@@ -52,7 +52,7 @@ func Boot() {
 	}
 
 	// load migrate files
-	migrate.DB = gdb.Def().DB
+	migrate.DB = gdb.Def()
 	if err := migrate.InitMigrationTable(); err != nil {
 		panic(fmt.Sprintf("migrate.InitMigrationTable() failed: %+v", err))
 	}
@@ -63,7 +63,7 @@ func Boot() {
 		cron.Start()
 	}
 
-	app.IsBootstrap = true
+	app.Booted = true
 	glog.Def().Println("boot success")
 }
 
