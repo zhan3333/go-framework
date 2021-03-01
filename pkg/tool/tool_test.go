@@ -9,5 +9,4 @@ import (
 func TestUrlToBase64QrCode(t *testing.T) {
 	base64Str := tool.UrlToBase64QrCode("http://www.baidu.com")
 	assert.NotEmpty(t, base64Str)
-	t.Log(base64Str)
 }

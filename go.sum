@@ -183,12 +183,14 @@ github.com/zhan3333/gdb v0.0.0-20201208070438-2ac6406c9fcd h1:sA8nYbxAP/5um/EGIR
 github.com/zhan3333/gdb v0.0.0-20201208070438-2ac6406c9fcd/go.mod h1:VMma9NO2q3I050i+dMOHDxWWIFUKsTOT6EIdVGMVAQo=
 github.com/zhan3333/gdb/v2 v2.0.0-alpha.1 h1:o7JZw6dQYQlViWQVWRZ1B4Y7fZWM8Zt2JngTpMrINs8=
 github.com/zhan3333/gdb/v2 v2.0.0-alpha.1/go.mod h1:FYbiQ65WAT5D/bh7zlflQ20qMN9HXDmBN2+jFNfyYEs=
-github.com/zhan3333/glog v1.0.0-alpha.1 h1:14HTH9RzT7FTT/i9ShMaWZ/ZmrHSGTCpuirT8HFy/7E=
-github.com/zhan3333/glog v1.0.0-alpha.1/go.mod h1:0gYyH74/VTVMWIZ448jhGutqzMK9WbhQ4EWYCQUm6+c=
 github.com/zhan3333/glog v1.0.0-alpha.2 h1:jwzxemhpO/1Ft96hQddOJwic8oIHIpK/XVxkuMNvFqc=
 github.com/zhan3333/glog v1.0.0-alpha.2/go.mod h1:0gYyH74/VTVMWIZ448jhGutqzMK9WbhQ4EWYCQUm6+c=
+github.com/zhan3333/glog v1.0.0-alpha.4 h1:WAjIu/gh/shpDIBIS9uNwjrMc56xxL4ykWaryoE05LE=
+github.com/zhan3333/glog v1.0.0-alpha.4/go.mod h1:0gYyH74/VTVMWIZ448jhGutqzMK9WbhQ4EWYCQUm6+c=
 github.com/zhan3333/go-migrate v0.0.0-20200816103434-16fe8d023b1d h1:YZl7nY8Ka0McypGsEUcRtQ7EVQHedXY7Ujax1KTFya0=
 github.com/zhan3333/go-migrate v0.0.0-20200816103434-16fe8d023b1d/go.mod h1:Ouyuv2TW3UJJozsP79JurajI5syIiinWRMostLq5MpI=
+github.com/zhan3333/go-migrate v0.0.0-20201209063042-2367efc11de3 h1:hNkW6Dmdk7od1gBdwuCjzDgYWdViH9b52Pd9OP+tQNQ=
+github.com/zhan3333/go-migrate v0.0.0-20201209063042-2367efc11de3/go.mod h1:rrrwJdIHFKMBsfMhQ25BvQKpbVl/WkoFIAo2y/GfXMQ=
 github.com/zhan3333/go-migrate/v2 v2.0.0-alpha.1 h1:uw5OVhhx4qioy/HpLs3g2Wx+5etCtrW0ZYKFGX8sa7Q=
 github.com/zhan3333/go-migrate/v2 v2.0.0-alpha.1/go.mod h1:GA0LgwhZz7VBo4GMfqCvXjCsOZaIewN0pdyy4XMOztA=
 github.com/zhan3333/gredis v0.0.0-20200816030454-c5ff23f64b63 h1:pSUk8BANUtuZDtP74dXq874I1SvVf4an8GkZxf4hnoI=

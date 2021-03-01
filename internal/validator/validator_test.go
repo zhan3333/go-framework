@@ -25,7 +25,7 @@ func TestMobileValidator(t *testing.T) {
 	err = validate.Struct(u)
 	assert.NotNil(t, err)
 	if err != nil {
-		t.Logf("err: %s", err.Error())
+		t.Logf("err: %v", err)
 	}
 	u.Mobile = "13517210601"
 	err = validate.Struct(u)

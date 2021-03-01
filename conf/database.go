@@ -37,18 +37,25 @@ var Database = database{
 	},
 }
 
-func init() {
-	if env.DefaultGetBool("DB_LOG", true) {
-		Database.MySQL[gdb.DefaultName].GORMConfig.Logger = logger.New(
-			// 使用 glog 记录, 需要关闭日志配置的 format
-			// glog.Def(),
-			// 输出到屏幕, 可以开启颜色选项
-			log.New(os.Stdout, "", log.LstdFlags),
-			logger.Config{
-				SlowThreshold: time.Second, // 慢 SQL 阈值
-				LogLevel:      logger.Info, // Log level
-				Colorful:      true,        // 彩色打印
-			},
-		)
+func dbLogMode() logger.LogLevel {
+	if env.DefaultGetBool("DB_LOG_MODE", true) {
+		return logger.Info
 	}
+	return logger.Silent
+}
+
+//由于 glog 包加载顺序与本包不确定, 故需要手动设置日志类
+func InitDBLogMode() {
+	mode := dbLogMode()
+	Database.MySQL[gdb.DefaultName].GORMConfig.Logger = logger.New(
+		// 使用 glog 记录, 需要关闭日志配置的 format
+		// glog.Def(),
+		// 输出到屏幕, 可以开启颜色选项
+		log.New(os.Stdout, "", log.LstdFlags),
+		logger.Config{
+			SlowThreshold: time.Second, // 慢 SQL 阈值
+			LogLevel:      mode,        // Log level
+			Colorful:      true,        // 彩色打印
+		},
+	)
 }

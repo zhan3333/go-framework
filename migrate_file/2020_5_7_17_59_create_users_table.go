@@ -2,8 +2,8 @@ package migrate_file
 
 import (
 	"fmt"
-	"github.com/jinzhu/gorm"
-	"github.com/zhan3333/go-migrate"
+	"github.com/zhan3333/gdb/v2"
+	"github.com/zhan3333/go-migrate/v2"
 	"go-framework/internal/model"
 )
 
@@ -12,22 +12,20 @@ func init() {
 }
 
 type CreateUsersTableMigrate struct {
+	migrate.File
 }
 
 func (CreateUsersTableMigrate) Key() string {
 	return "2020_5_7_17_59_create_users_table"
 }
 
-func (CreateUsersTableMigrate) Up(tx *gorm.DB) (err error) {
-	if tx.HasTable(model.User{}.TableName()) {
-		err = fmt.Errorf("users table alreay exist")
-		return
+func (CreateUsersTableMigrate) Up(tx *gdb.Entry) error {
+	if tx.Migrator().HasTable(&model.User{}) {
+		return fmt.Errorf("users table alreay exist")
 	}
-	err = tx.CreateTable(&model.User{}).Error
-	return
+	return tx.Migrator().CreateTable(&model.User{})
 }
 
-func (CreateUsersTableMigrate) Down(tx *gorm.DB) (err error) {
-	err = tx.DropTableIfExists(&model.User{}).Error
-	return
+func (CreateUsersTableMigrate) Down(tx *gdb.Entry) error {
+	return tx.Migrator().DropTable(&model.User{})
 }
