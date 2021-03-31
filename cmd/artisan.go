@@ -3,15 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/zhan3333/go-migrate"
-	"go-framework/boot"
+	"github.com/zhan3333/go-migrate/v2"
+	_ "go-framework/core/boot/console"
 	"os"
 	"strconv"
 )
 
 func init() {
-	boot.SetInCommand()
-	boot.Boot()
 	flag.Usage = usage
 }
 

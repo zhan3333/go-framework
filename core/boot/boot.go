@@ -8,14 +8,16 @@ import (
 	"github.com/zhan3333/gredis"
 	"go-framework/app"
 	"go-framework/conf"
+	"go-framework/core/http"
 	"go-framework/internal/cron"
-	"go-framework/internal/middleware"
 	routes "go-framework/internal/route"
 	"go-framework/internal/validator"
 	_ "go-framework/migrate_file"
 	"go-framework/storage"
 	"time"
 )
+
+// 框架启动
 
 func SetInTest() {
 	app.InTest = true
@@ -59,8 +61,8 @@ func logBootInfo(info string) {
 
 func logBootPanic(msg string, err error) {
 	datetime := time.Now().Format("2006-01-02 15:04:05")
-	glog.Def().Panicf("[%s] boot: %s: %+v", datetime, msg, err)
 	fmt.Printf("[%s] boot: %s: %+v\n", datetime, msg, err)
+	glog.Def().Panicf("[%s] boot: %s: %+v", datetime, msg, err)
 }
 
 func bootLog() {
@@ -93,11 +95,11 @@ func bootStorage() {
 }
 
 func bootHTTP() {
-	middleware.Init()
+	http.Init()
 	logBootInfo("middleware module init")
 	if !app.RunningInConsole() {
 		// 注册路由
-		routes.InitRouter()
+		app.SetRouter(routes.NewRouter())
 		logBootInfo("route module init")
 
 		validator.Init()

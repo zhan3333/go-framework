@@ -2,17 +2,20 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-framework/internal/controller/user_controller"
-	"go-framework/internal/middleware"
+	"go-framework/core/http"
+	route "go-framework/internal/api/v1"
 )
 
 func LoadApi(router *gin.Engine) {
-	api := router.Group("/api", middleware.Middleware.Api...)
+	api := router.Group("/api", http.Middleware.Api...)
 	{
-		user := api.Group("/users")
+		v1 := api.Group("/v1")
 		{
-			user.POST("", user_controller.Store)
-			user.GET("", user_controller.List)
+			user := v1.Group("/users")
+			{
+				user.POST("", route.UserStore)
+				user.GET("", route.UserList)
+			}
 		}
 	}
 }

@@ -2,8 +2,8 @@ package env_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go-framework/boot"
 	"go-framework/conf/env"
+	"go-framework/core/boot"
 	"os"
 	"testing"
 )

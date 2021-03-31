@@ -1,9 +1,11 @@
 package main
 
 import (
-	"go-framework/boot"
+	"go-framework/app"
 	"go-framework/conf"
-	routes "go-framework/internal/route"
+	"go-framework/core/boot"
+	// 引入的形式启动框架
+	_ "go-framework/core/boot/http"
 	"log"
 )
 
@@ -13,8 +15,6 @@ import (
 // @license.name none
 func main() {
 	defer boot.Destroy()
-	boot.Boot()
-	router := routes.GetRouter()
-	err := router.Run(conf.Host)
+	err := app.GetRouter().Run(conf.Host)
 	log.Println(err)
 }

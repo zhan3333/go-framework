@@ -2,7 +2,7 @@ package validator_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go-framework/boot"
+	"go-framework/core/boot"
 	"go-framework/internal/validator"
 	v "gopkg.in/go-playground/validator.v9"
 	"testing"

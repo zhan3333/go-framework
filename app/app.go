@@ -2,9 +2,12 @@ package app
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"path/filepath"
 	"runtime"
 )
+
+// 储存全局变量
 
 var (
 	InTest      bool
@@ -14,6 +17,7 @@ var (
 	StoragePath string
 	// 是否引导完毕
 	Booted bool
+	router *gin.Engine
 )
 
 func init() {
@@ -39,4 +43,15 @@ func RunningInTest() bool {
 
 func IsBooted() bool {
 	return Booted
+}
+
+func SetRouter(engine *gin.Engine) {
+	router = engine
+}
+
+func GetRouter() *gin.Engine {
+	if router == nil {
+		panic("router not set")
+	}
+	return router
 }

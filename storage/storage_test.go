@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"go-framework/app"
-	"go-framework/boot"
+	"go-framework/core/boot"
 	"go-framework/storage"
 	"io/ioutil"
 	"log"
