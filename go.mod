@@ -5,6 +5,7 @@ go 1.13
 require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/bxcodec/faker/v3 v3.3.1
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.5.0
 	github.com/go-playground/locales v0.12.1
 	github.com/go-playground/universal-translator v0.16.0
@@ -24,6 +25,7 @@ require (
 	github.com/zhan3333/glog v1.0.0-alpha.4
 	github.com/zhan3333/go-migrate/v2 v2.0.0-alpha.1
 	github.com/zhan3333/gredis v0.0.0-20200816030454-c5ff23f64b63
+	golang.org/x/crypto v0.0.0-20190611184440-5c40567a22f8
 	gopkg.in/go-playground/validator.v9 v9.29.1
 	gorm.io/gorm v1.20.8
 )

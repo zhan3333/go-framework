@@ -17,6 +17,7 @@ var (
 	Env      = os.Getenv("APP_ENV")
 	Debug    = env.DefaultGetBool("DEBUG", false)
 	Host     = os.Getenv("APP_HOST")
+	Secret   = os.Getenv("SECRET")
 )
 
 func init() {
@@ -30,5 +31,8 @@ func init() {
 		GinModel = gin2.DebugMode
 	case "production":
 		GinModel = gin2.ReleaseMode
+	}
+	if Secret == "" {
+		panic("env SECRET must set")
 	}
 }
