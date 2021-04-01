@@ -10,12 +10,12 @@ require (
 	github.com/go-playground/universal-translator v0.16.0
 	github.com/joho/godotenv v1.3.0
 	github.com/mailru/easyjson v0.7.1
-	github.com/onsi/ginkgo v1.10.1
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.7.0
 	github.com/skip2/go-qrcode v0.0.0-20200526175731-7ac0b40b2038
+	github.com/spf13/cobra v1.1.3
 	github.com/stretchr/testify v1.6.1
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.2.0

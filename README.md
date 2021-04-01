@@ -66,7 +66,7 @@ go run main.go
 - [x] faker 数据填充
 - [x] Redis 多连接配置
 - [x] MySQL 多连接配置
-- [] console 模块优化
+- [x] console 模块优化 (使用 cobra)
 - [] storage 模块优化
     - [] 目录映射
     - [] 使用文档

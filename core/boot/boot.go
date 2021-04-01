@@ -49,13 +49,17 @@ func Destroy() {
 
 func bootStart() {
 	datetime := time.Now().Format("2006-01-02 15:04:05")
-	fmt.Printf("[%s] boot: %s\n", datetime, "app boot start")
+	if !app.InConsole {
+		fmt.Printf("[%s] boot: %s\n", datetime, "app boot start")
+	}
 }
 
 func logBootInfo(info string) {
 	datetime := time.Now().Format("2006-01-02 15:04:05")
 	glog.Def().Infof("[%s] boot: %s", datetime, info)
-	fmt.Printf("[%s] boot: %s\n", datetime, info)
+	if !app.InConsole {
+		fmt.Printf("[%s] boot: %s\n", datetime, info)
+	}
 }
 
 func logBootPanic(msg string, err error) {

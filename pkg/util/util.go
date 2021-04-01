@@ -1,13 +1,21 @@
-package tool
+package util
 
 import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	outUUID "github.com/satori/go.uuid"
 	"github.com/skip2/go-qrcode"
 	"log"
+	"math/rand"
+	"strings"
+	"time"
 )
+
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
 
 func Dump(data interface{}) {
 	bf := bytes.NewBuffer([]byte{})
@@ -44,4 +52,22 @@ func JSONString(v interface{}) string {
 
 func JSONParseString(d string, v interface{}) error {
 	return json.Unmarshal([]byte(d), &v)
+}
+
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+// 产生指定长度的随机字符串
+func RandStringN(n int) string {
+	if n <= 0 {
+		return ""
+	}
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
+}
+
+func UUID() string {
+	return strings.ReplaceAll(outUUID.NewV4().String(), "-", "")
 }

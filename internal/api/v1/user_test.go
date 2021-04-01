@@ -8,7 +8,7 @@ import (
 	"go-framework/core/http/resp"
 	app2 "go-framework/internal/api/v1/app"
 	"go-framework/pkg/test"
-	"go-framework/pkg/tool"
+	"go-framework/pkg/util"
 	"net/http"
 	"testing"
 )
@@ -24,7 +24,7 @@ func TestStore(t *testing.T) {
 	assert.Equal(t, http.StatusOK, httpResp.Code)
 	response := resp.Parse(httpResp.Body.Bytes())
 	assert.Equal(t, resp.CodeSuccess, response.Code)
-	tool.Dump(response)
+	util.Dump(response)
 }
 
 func TestStoreParamsErr(t *testing.T) {
@@ -36,7 +36,7 @@ func TestStoreParamsErr(t *testing.T) {
 	response := resp.Parse(httpResp.Body.Bytes())
 	assert.Equal(t, resp.CodeFailed, response.Code)
 	assert.Contains(t, response.Message, "为必填字段")
-	tool.Dump(response)
+	util.Dump(response)
 }
 
 func TestList(t *testing.T) {
@@ -48,5 +48,5 @@ func TestList(t *testing.T) {
 	assert.Equal(t, http.StatusOK, httpResp.Code)
 	response := resp.Parse(httpResp.Body.Bytes())
 	assert.Equal(t, resp.CodeSuccess, response.Code)
-	tool.Dump(response)
+	util.Dump(response)
 }
