@@ -4,9 +4,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-framework/conf"
 	"go-framework/core/http"
+	storage2 "go-framework/core/storage"
 	"go-framework/internal/route/api"
 	"go-framework/internal/route/swag"
-	"go-framework/storage"
 	"io"
 	"os"
 )
@@ -15,7 +15,7 @@ var engine *gin.Engine
 
 func NewRouter() *gin.Engine {
 	gin.SetMode(conf.GinModel)
-	f, _ := os.Create(storage.Storage.FullPath("logs/route.log"))
+	f, _ := os.Create(storage2.Storage.FullPath("logs/route.log"))
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 
 	engine = gin.New()

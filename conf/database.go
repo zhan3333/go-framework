@@ -3,7 +3,7 @@ package conf
 import (
 	"github.com/zhan3333/gdb/v2"
 	"github.com/zhan3333/gredis"
-	"go-framework/conf/env"
+	"go-framework/core/env"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"log"

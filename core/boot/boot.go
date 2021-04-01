@@ -9,11 +9,11 @@ import (
 	"go-framework/app"
 	"go-framework/conf"
 	"go-framework/core/http"
+	storage2 "go-framework/core/storage"
 	"go-framework/internal/cron"
 	routes "go-framework/internal/route"
 	"go-framework/internal/validator"
 	_ "go-framework/migrate_file"
-	"go-framework/storage"
 	"time"
 )
 
@@ -30,7 +30,6 @@ func SetInCommand() {
 // 应用启动入口
 func Boot() {
 	bootStart()
-	conf.Init()
 
 	bootLog()
 	bootDB()
@@ -90,7 +89,7 @@ func bootDB() {
 }
 
 func bootStorage() {
-	storage.Init(app.StoragePath)
+	storage2.Init(app.StoragePath)
 	logBootInfo("storage module init")
 }
 

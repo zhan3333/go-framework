@@ -10,6 +10,7 @@ require (
 	github.com/go-playground/universal-translator v0.16.0
 	github.com/joho/godotenv v1.3.0
 	github.com/mailru/easyjson v0.7.1
+	github.com/onsi/ginkgo v1.10.1
 	github.com/pkg/errors v0.9.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/satori/go.uuid v1.2.0

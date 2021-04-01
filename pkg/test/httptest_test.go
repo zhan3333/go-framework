@@ -23,7 +23,6 @@ func TestNew(t *testing.T) {
 func TestHttp_GetWithBody(t *testing.T) {
 	router := gin.New()
 	router.GET("/test", func(c *gin.Context) {
-		var err error
 		type T struct {
 			Test string `json:"test" form:"test"`
 		}
@@ -31,8 +30,7 @@ func TestHttp_GetWithBody(t *testing.T) {
 		t.Log("ok")
 		t.Logf("path: %s", c.FullPath())
 		var tt T
-		err = c.ShouldBindJSON(&tt)
-		assert.Nil(t, err)
+		assert.Nil(t, c.ShouldBind(&tt))
 		assert.Equal(t, "test", tt.Test)
 		c.String(http.StatusOK, "ok")
 	})

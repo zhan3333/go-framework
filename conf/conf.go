@@ -2,9 +2,11 @@ package conf
 
 import (
 	gin2 "github.com/gin-gonic/gin"
-	"go-framework/conf/env"
-	_ "go-framework/conf/env"
+	"go-framework/core/env"
 	"os"
+
+	// 加载 env 文件
+	_ "go-framework/core/env"
 	"strings"
 )
 
@@ -17,7 +19,7 @@ var (
 	Host     = os.Getenv("APP_HOST")
 )
 
-func Init() {
+func init() {
 	if !strings.EqualFold(Env, "local") && !strings.EqualFold(Env, "production") && !strings.EqualFold(Env, "testing") {
 		panic("env APP_ENV must be: local, production, testing")
 	}
