@@ -72,3 +72,35 @@ func (User) IsEmailExists(email string) (bool, error) {
 	}
 	return true, nil
 }
+
+func (User) FirstUserByEmail(email string) (*model.User, error) {
+	var (
+		user = &model.User{}
+		err  error
+	)
+	err = gdb.Def().
+		Where(&model.User{Email: email}).
+		First(user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, errors.Wrap(err, MsgQueryFailed)
+	}
+	return user, nil
+}
+
+func (User) First(userID uint64) (*model.User, error) {
+	var (
+		user = &model.User{}
+		err  error
+	)
+	err = gdb.Def().First(user, userID).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, errors.Wrap(err, MsgQueryFailed)
+	}
+	return user, nil
+}

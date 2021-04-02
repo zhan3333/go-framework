@@ -11,6 +11,8 @@ import (
 var (
 	ErrTimeoutToken = errors.New("登录凭据过期")
 	ErrTokenFormat  = errors.New("无效的凭据格式")
+	ErrNoToken      = errors.New("未提供登录凭据")
+	ErrUserNoExists = errors.New("用户不存在")
 )
 
 func NewJWT() JWT {
@@ -33,22 +35,32 @@ type JWTClaims struct {
 	Authorized bool
 }
 
-func (A JWT) Create(userID uint64) (string, error) {
+type JWTToken struct {
+	Token     string
+	Type      string
+	ExpiresAt int64
+}
+
+func (A JWT) Create(userID uint64) (*JWTToken, error) {
 	var err error
-	now := time.Now()
+	var expiresAt = time.Now().Add(A.ExpDuration).Unix()
 	j := jwt.NewJWT(A.Secret)
 	token, err := j.Create(JWTClaims{
 		StandardClaims: jwtgo.StandardClaims{
 			Issuer:    A.Issuer,
-			ExpiresAt: now.Add(A.ExpDuration).Unix(),
+			ExpiresAt: expiresAt,
 		},
 		UserID:     userID,
 		Authorized: true,
 	})
 	if err != nil {
-		return "", errors.Wrap(err, "创建 token 失败")
+		return nil, errors.Wrap(err, "创建 token 失败")
 	}
-	return token, nil
+	return &JWTToken{
+		Token:     token,
+		Type:      "bearer",
+		ExpiresAt: expiresAt,
+	}, nil
 }
 
 func (A JWT) Parse(tokenStr string) (JWTClaims, error) {

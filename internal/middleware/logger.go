@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"github.com/zhan3333/glog"
 	"io/ioutil"
 	"time"
 )
@@ -50,7 +51,7 @@ func Logger() gin.HandlerFunc {
 		//结束时间
 		endTime := time.Now()
 
-		log.WithFields(log.Fields{
+		glog.Channel("route").WithFields(log.Fields{
 			"request_uri":    c.Request.RequestURI,
 			"request_method": c.Request.Method,
 			"client_ip":      c.ClientIP(),
@@ -59,6 +60,6 @@ func Logger() gin.HandlerFunc {
 			"request":        string(s),
 			"response":       responseBody,
 			"use_time":       endTime.Sub(startTime).String(),
-		}).Info("记录请求")
+		}).Info("记录请求响应")
 	}
 }

@@ -50,7 +50,7 @@ func JSONString(v interface{}) string {
 	return string(b)
 }
 
-func JSONParseString(d string, v interface{}) error {
+func JSONParse(d string, v interface{}) error {
 	return json.Unmarshal([]byte(d), &v)
 }
 
@@ -70,4 +70,12 @@ func RandStringN(n int) string {
 
 func UUID() string {
 	return strings.ReplaceAll(outUUID.NewV4().String(), "-", "")
+}
+
+func MapToStruct(m map[string]interface{}, s interface{}) error {
+	b, err := JSON(m)
+	if err != nil {
+		return err
+	}
+	return JSONParse(string(b), s)
 }

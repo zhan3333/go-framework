@@ -46,12 +46,12 @@ func TestAuthJWT_Create(t *testing.T) {
 				t.Errorf("Create() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if len(got) == 0 {
-				t.Errorf("token len must than 0")
+			if got == nil {
+				t.Errorf("token must return")
 				return
 			}
 			// 进行校验
-			claims, err := A.Parse(got)
+			claims, err := A.Parse(got.Token)
 			assert.Nil(t, err)
 			if !claims.Authorized {
 				t.Errorf("claims.Authorized must be true")

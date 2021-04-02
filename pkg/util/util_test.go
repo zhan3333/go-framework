@@ -84,10 +84,10 @@ func TestJSONParseString(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := JSONParseString(tt.args.d, tt.args.v); (err != nil) != tt.wantErr {
-				t.Errorf("JSONParseString() error = %v, wantErr %v", err, tt.wantErr)
+			if err := JSONParse(tt.args.d, tt.args.v); (err != nil) != tt.wantErr {
+				t.Errorf("JSONParse() error = %v, wantErr %v", err, tt.wantErr)
 			} else if !reflect.DeepEqual(*tt.args.v.(*Test), tt.want) {
-				t.Errorf("JSONParseString want: %v, got %v", tt.want, *tt.args.v.(*Test))
+				t.Errorf("JSONParse want: %v, got %v", tt.want, *tt.args.v.(*Test))
 			}
 		})
 	}
@@ -209,6 +209,48 @@ func TestUrlToBase64QrCode(t *testing.T) {
 			got := UrlToBase64QrCode(tt.args.url)
 			if !strings.Contains(got, "data:image/png;base64,") {
 				t.Errorf("返回值中不包含 data:image/png;base64, 字符")
+			}
+		})
+	}
+}
+
+func TestMapToStruct(t *testing.T) {
+	type Test struct {
+		Name string `json:"name"`
+		Age  int    `json:"age"`
+	}
+	type args struct {
+		m map[string]interface{}
+		s interface{}
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "测试1",
+			args: args{
+				m: map[string]interface{}{
+					"name": "zhan",
+					"age":  25,
+				},
+				s: &Test{},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := MapToStruct(tt.args.m, tt.args.s); (err != nil) != tt.wantErr {
+				t.Errorf("MapToStruct() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if tt.args.s.(*Test).Name != tt.args.m["name"] {
+				t.Errorf("need %v, got %v", tt.args.m["name"], tt.args.s.(*Test).Name)
+			}
+			if tt.args.s.(*Test).Age != tt.args.m["age"] {
+				t.Errorf("need %v, got %v", tt.args.m["age"], tt.args.s.(*Test).Age)
 			}
 		})
 	}

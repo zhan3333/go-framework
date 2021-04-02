@@ -16,7 +16,7 @@ var Logging = struct {
 			Path:   filepath.Join(app.StoragePath, "logs/main.log"),
 			Level:  glog.DebugLevel,
 		},
-		"gin": {
+		"route": {
 			Driver: glog.SINGLE,
 			Path:   filepath.Join(app.StoragePath, "logs/route.log"),
 			Level:  glog.DebugLevel,

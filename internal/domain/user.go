@@ -4,6 +4,7 @@ import (
 	"errors"
 	"go-framework/internal/model"
 	"go-framework/internal/repo"
+	"go-framework/pkg/auth"
 )
 
 type User struct{}
@@ -22,6 +23,11 @@ func (User) Store(params repo.StoreUserParams) (*model.User, error) {
 	} else if ok {
 		return nil, errors.New("邮箱已被注册")
 	}
+	pwd, err := auth.Encrypt(params.Password)
+	if err != nil {
+		return nil, err
+	}
+	params.Password = pwd
 	return repo.NewUser().Store(params)
 }
 
