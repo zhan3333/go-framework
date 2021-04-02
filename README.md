@@ -74,8 +74,8 @@ go run main.go
     - [] 带 token 的资源访问
     - [] 带 失效时间的 资源访问
 - [] 中间件
-    - [] JWT 中间件加入
-    - [] cors 跨域中间件
+    - [x] JWT 中间件加入
+    - [x] cors 跨域中间件 (github.com/gin-contrib/cors)
     - [] 请求速率 throttle 中间件
 
 ## 相关文档
@@ -93,6 +93,8 @@ go run main.go
 [Redis](https://github.com/go-redis/redis)
 
 [Swag](https://github.com/swaggo/swag)
+
+[gin 官方中间件](https://github.com/gin-contrib)
 
 ## 其它
 
