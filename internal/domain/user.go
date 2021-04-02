@@ -12,6 +12,10 @@ func NewUser() User {
 	return User{}
 }
 
+func (User) IsEmailUsed(email string) (bool, error) {
+	return repo.NewUser().IsEmailExists(email)
+}
+
 func (User) Store(params repo.StoreUserParams) (*model.User, error) {
 	if ok, err := (repo.User{}).IsEmailExists(params.Email); err != nil {
 		return nil, err

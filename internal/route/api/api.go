@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"go-framework/core/http"
-	route "go-framework/internal/api/v1"
+	user2 "go-framework/internal/api/v1/user"
 )
 
 func LoadApi(router *gin.Engine) {
@@ -11,10 +11,13 @@ func LoadApi(router *gin.Engine) {
 	{
 		v1 := api.Group("/v1")
 		{
+			auth := v1.Group("/auth")
+			{
+				auth.POST("register", user2.Register)
+			}
 			user := v1.Group("/users")
 			{
-				user.POST("", route.UserStore)
-				user.GET("", route.UserList)
+				user.GET("", user2.List)
 			}
 		}
 	}

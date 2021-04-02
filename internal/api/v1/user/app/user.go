@@ -6,8 +6,15 @@ import (
 	"go-framework/internal/repo"
 )
 
-func UserStoreApp(req UserStoreRequest, resp resp.Responser) {
+func Register(req RegisterReq, resp resp.Responser) {
 	var err error
+	if isUsed, err := domain.NewUser().IsEmailUsed(req.Email); err != nil {
+		resp.ErrorEmpty(err)
+		return
+	} else if isUsed {
+		resp.FailedMsg("邮箱已被使用")
+		return
+	}
 	// 调用领域
 	params := repo.StoreUserParams{
 		Name:     req.Name,
@@ -23,7 +30,7 @@ func UserStoreApp(req UserStoreRequest, resp resp.Responser) {
 	resp.SuccessEmpty()
 }
 
-func UserListApp(req UserListRequest, resp resp.Responser) {
+func UserList(req UserListRequest, resp resp.Responser) {
 	var (
 		err   error
 		users []repo.ApiUser
