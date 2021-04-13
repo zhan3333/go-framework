@@ -6,9 +6,10 @@ require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
 	github.com/bxcodec/faker/v3 v3.3.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/gin-gonic/gin v1.5.0
-	github.com/go-playground/locales v0.12.1
-	github.com/go-playground/universal-translator v0.16.0
+	github.com/gin-contrib/pprof v1.3.0
+	github.com/gin-gonic/gin v1.6.2
+	github.com/go-playground/locales v0.13.0
+	github.com/go-playground/universal-translator v0.17.0
 	github.com/joho/godotenv v1.3.0
 	github.com/mailru/easyjson v0.7.1
 	github.com/pkg/errors v0.9.1

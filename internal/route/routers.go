@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"go-framework/conf"
 	"go-framework/core/http"
@@ -22,6 +23,7 @@ func NewRouter() *gin.Engine {
 	engine.Use(gin.Recovery(), gin.Logger())
 	// 加载默认中间件
 	engine.Use(http.Middleware.Def...)
+	pprof.Register(engine)
 	loadRoutes()
 	return engine
 }

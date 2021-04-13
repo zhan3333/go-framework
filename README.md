@@ -77,6 +77,7 @@ go run main.go
     - [x] JWT 中间件加入
     - [x] cors 跨域中间件 (github.com/gin-contrib/cors)
     - [] 请求速率 throttle 中间件
+- [] pprof 性能监控 (使用 `go tool pprof http://localhost:8090/debug/pprof/heap` 访问)
 
 ## 相关文档
 
