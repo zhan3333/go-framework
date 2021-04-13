@@ -97,6 +97,8 @@ go run main.go
 
 [gin 官方中间件](https://github.com/gin-contrib)
 
+[gin-pprof](https://github.com/gin-contrib/pprof)
+
 ## 其它
 
 ### 配置使用module模式
