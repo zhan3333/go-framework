@@ -14,7 +14,7 @@ Email: grianchan@gmail.com
 - `多数据库连接管理`
 - 支持命令行模式 + HTTP 模式
 - 协程下的定时任务功能
-- 使用 `GORM` v2 
+- 使用 `GORM` v2
 - 待完善的储存系统
 
 ## Change Log
@@ -78,6 +78,7 @@ go run main.go
     - [x] cors 跨域中间件 (github.com/gin-contrib/cors)
     - [] 请求速率 throttle 中间件
 - [] pprof 性能监控 (使用 `go tool pprof http://localhost:8090/debug/pprof/heap` 访问)
+- [] 配置模块改用 github.com/BurntSushi/toml
 
 ## 相关文档
 
@@ -104,16 +105,19 @@ go run main.go
 ### 配置使用module模式
 
 mac:
+
 ```shell script
 export GO111MODULE=on
 ```
 
 windows:
+
 ```shell script
 set GO111MODULE=on
 ```
 
 输入
+
 ```shell script
 go env
 ```
@@ -121,7 +125,9 @@ go env
 确认 `GO111MODULE` 选项
 
 运行
+
 ```shell script
 go mod vendor
 ```
+
 下载依赖到 `vendor` 目录
