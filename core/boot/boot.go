@@ -27,7 +27,7 @@ func SetInCommand() {
 	app.InConsole = true
 }
 
-// 应用启动入口
+// Boot 应用启动入口
 func Boot() {
 	bootStart()
 

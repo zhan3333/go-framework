@@ -44,9 +44,7 @@ func (s *storage) Url(path string) string {
 	return fmt.Sprintf("%s/public/%s", s.Uri, path)
 }
 
-/**
-判断文件是否存在, 使用的是文件的保存路径 storage/app/public/ 下
-*/
+// Exists 判断文件是否存在, 使用的是文件的保存路径 storage/app/public/ 下
 func (s *storage) Exists(path string) bool {
 	fullPath := s.FullPath(path)
 	_, err := os.Stat(fullPath)
@@ -59,9 +57,7 @@ func (s *storage) Exists(path string) bool {
 	return true
 }
 
-/**
-保存base64字符串为文件
-*/
+// StoreBase64RandomName 保存base64字符串为文件
 func (s *storage) StoreBase64RandomName(path string, ImgBase64 string) (string, error) {
 	b64data := ImgBase64[strings.IndexByte(ImgBase64, ',')+1:]
 	fileContent, err := base64.StdEncoding.DecodeString(b64data)
@@ -82,7 +78,7 @@ func (s *storage) StoreBase64RandomName(path string, ImgBase64 string) (string, 
 	return filepath.Join(path, fileName), nil
 }
 
-// 将文件转换为 base64 字符串
+// FileToBase64 将文件转换为 base64 字符串
 func (s *storage) FileToBase64(path string) (string, error) {
 	fileContent, err := ioutil.ReadFile(s.FullPath(path))
 	if err != nil {
@@ -92,14 +88,14 @@ func (s *storage) FileToBase64(path string) (string, error) {
 	return base64String, nil
 }
 
-// 获取base64图片的尺寸 Mb 为单位
+// GetBase64SizeMb 获取base64图片的尺寸 Mb 为单位
 func (s *storage) GetBase64SizeMb(base64 string) float64 {
 	deviation := 0.0
 	length := float64(len(base64))
 	return length / 1024.0 / 1024.0 * (1.0 - deviation)
 }
 
-// 获取base64图片的尺寸 kb 为单位
+// GetBase64SizeKb 获取base64图片的尺寸 kb 为单位
 func (s *storage) GetBase64SizeKb(base64 string) float64 {
 	deviation := 0.0
 	length := float64(len(base64))

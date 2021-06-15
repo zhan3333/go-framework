@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
+	"go-framework/app"
 	"go-framework/conf"
 	"go-framework/core/http"
 	storage2 "go-framework/core/storage"
@@ -10,6 +11,7 @@ import (
 	"go-framework/internal/route/swag"
 	"io"
 	"os"
+	"path"
 )
 
 var engine *gin.Engine
@@ -30,6 +32,7 @@ func NewRouter() *gin.Engine {
 
 // 新增加的路由文件需要在这里进行加载
 func loadRoutes() {
+	engine.Static("public", path.Join(app.StoragePath, "app/public"))
 	api.LoadApi(engine)
 	swag.LoadSwag(engine)
 }
