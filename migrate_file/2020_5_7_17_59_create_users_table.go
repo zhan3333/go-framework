@@ -2,9 +2,9 @@ package migrate_file
 
 import (
 	"fmt"
-	"github.com/zhan3333/gdb/v2"
-	"github.com/zhan3333/go-migrate/v2"
 	"go-framework/internal/model"
+	"go-framework/pkg/gdb"
+	"go-framework/pkg/migrate"
 )
 
 func init() {

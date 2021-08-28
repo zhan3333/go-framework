@@ -2,8 +2,8 @@ package repo
 
 import (
 	"github.com/pkg/errors"
-	"github.com/zhan3333/gdb/v2"
 	"go-framework/internal/model"
+	"go-framework/pkg/gdb"
 	"gorm.io/gorm"
 )
 

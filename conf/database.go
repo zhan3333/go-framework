@@ -1,10 +1,10 @@
 package conf
 
 import (
-	"github.com/zhan3333/gdb/v2"
-	"github.com/zhan3333/glog"
-	"github.com/zhan3333/gredis"
 	"go-framework/core/env"
+	"go-framework/pkg/gdb"
+	"go-framework/pkg/glog"
+	"go-framework/pkg/gredis"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"os"

@@ -2,8 +2,8 @@ package main_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/zhan3333/gdb/v2"
 	"go-framework/conf"
+	"go-framework/pkg/gdb"
 	"testing"
 )
 

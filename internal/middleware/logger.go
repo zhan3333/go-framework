@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"github.com/zhan3333/glog"
+	"go-framework/pkg/glog"
 	"io/ioutil"
 	"time"
 )

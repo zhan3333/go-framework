@@ -1,8 +1,8 @@
 package conf
 
 import (
-	"github.com/zhan3333/glog"
 	"go-framework/app"
+	"go-framework/pkg/glog"
 	"path/filepath"
 )
 

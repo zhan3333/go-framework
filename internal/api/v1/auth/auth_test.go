@@ -3,7 +3,6 @@ package auth_test
 import (
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/assert"
-	"github.com/zhan3333/gdb/v2"
 	app2 "go-framework/app"
 	_ "go-framework/core/boot/http"
 	"go-framework/core/http/resp"
@@ -11,6 +10,7 @@ import (
 	"go-framework/internal/domain"
 	"go-framework/internal/model"
 	"go-framework/internal/repo"
+	"go-framework/pkg/gdb"
 	"go-framework/pkg/test"
 	"go-framework/pkg/util"
 	"net/http"

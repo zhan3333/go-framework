@@ -15,7 +15,7 @@ var (
 	Path        string
 	TestPath    string
 	StoragePath string
-	// 是否引导完毕
+	// Booted 是否引导完毕
 	Booted bool
 	router *gin.Engine
 )

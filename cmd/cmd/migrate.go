@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/zhan3333/go-migrate/v2"
+	"go-framework/pkg/migrate"
 )
 
 var migrateCmd = &cobra.Command{

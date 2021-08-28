@@ -2,10 +2,6 @@ package boot
 
 import (
 	"fmt"
-	"github.com/zhan3333/gdb/v2"
-	"github.com/zhan3333/glog"
-	"github.com/zhan3333/go-migrate/v2"
-	"github.com/zhan3333/gredis"
 	"go-framework/app"
 	"go-framework/conf"
 	"go-framework/core/http"
@@ -14,6 +10,10 @@ import (
 	routes "go-framework/internal/route"
 	"go-framework/internal/validator"
 	_ "go-framework/migrate_file"
+	"go-framework/pkg/gdb"
+	"go-framework/pkg/glog"
+	"go-framework/pkg/gredis"
+	"go-framework/pkg/migrate"
 	"time"
 )
 
