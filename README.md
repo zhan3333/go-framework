@@ -15,6 +15,7 @@ Email: grianchan@gmail.com
 - 支持命令行模式 + HTTP 模式
 - 协程下的定时任务功能
 - 使用 `GORM` v2
+- toml 配置文件加载
 - 待完善的储存系统
 
 ## Change Log
@@ -25,16 +26,16 @@ Email: grianchan@gmail.com
 
 项目推荐使用 [module 模式](#配置使用module模式) 开发
 
-### 配置 env
+### 配置 config/config.toml
 
 ```shell script
-cp .env.example .env
+cp config/default.tmol config/local.toml
 ```
 
 ### 编译
 
 - `go build`
-- `./go-framework`
+- `./go-framework --config=local.tmol` // 固定读取 config 目录下的配置文件
 
 ### 开发
 
