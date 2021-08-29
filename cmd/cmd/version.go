@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"go-framework/conf"
+	"go-framework/app"
 	"os"
 )
 
@@ -12,7 +12,7 @@ var versionCmd = &cobra.Command{
 	Short: "show app version",
 
 	Run: func(cmd *cobra.Command, args []string) {
-		_, _ = fmt.Fprintf(os.Stdout, "[%s] %s version v1", conf.Name, conf.Env)
+		_, _ = fmt.Fprintf(os.Stdout, "[%s] %s version v1", app.Config.App.Name, app.Config.App.Env)
 	},
 }
 

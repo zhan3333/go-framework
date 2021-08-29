@@ -51,7 +51,7 @@ func Logger() gin.HandlerFunc {
 		//结束时间
 		endTime := time.Now()
 
-		glog.Channel("route").WithFields(log.Fields{
+		glog.Sys.WithFields(log.Fields{
 			"request_uri":    c.Request.RequestURI,
 			"request_method": c.Request.Method,
 			"client_ip":      c.ClientIP(),

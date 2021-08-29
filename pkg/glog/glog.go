@@ -30,9 +30,9 @@ const (
 
 const (
 	NONE = iota
-	// 单文件驱动
+	// SINGLE 单文件驱动
 	SINGLE
-	// 日驱动
+	// DAILY 日驱动
 	DAILY
 	STDOUT
 )
@@ -49,7 +49,7 @@ type Log struct {
 	Hooks        []logrus.Hook
 }
 
-// 默认日志格式
+// DefaultFormat 默认日志格式
 var DefaultFormat logrus.Formatter = LocalFormatter{&logrus.JSONFormatter{
 	PrettyPrint:       false,
 	DisableHTMLEscape: true,

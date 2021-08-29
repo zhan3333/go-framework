@@ -1,8 +1,8 @@
 package main
 
 import (
+	"fmt"
 	"go-framework/app"
-	"go-framework/conf"
 	"go-framework/core/boot"
 	// 引入的形式启动框架
 	_ "go-framework/core/boot/http"
@@ -15,6 +15,6 @@ import (
 // @license.name none
 func main() {
 	defer boot.Destroy()
-	err := app.GetRouter().Run(conf.Host)
+	err := app.GetRouter().Run(fmt.Sprintf("%s:%d", app.Config.App.Host, app.Config.App.Port))
 	log.Println(err)
 }

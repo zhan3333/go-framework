@@ -1,0 +1,44 @@
+[app]
+name = "go-framework"
+port = 8080
+host = "0.0.0.0"
+env = "local"
+debug = true
+url = ""
+
+[jwt]
+secret = "123456"
+ttl = "60m"
+issuer = "go-framework"
+
+[db.default]
+
+host = "127.0.0.1"
+port = 3306
+database = "go-framework"
+username = "root"
+password = "123456"
+logEnable = true
+
+[redis.default]
+
+host = "127.0.0.1"
+password = ""
+port = 3306
+index = 0
+
+[log]
+
+[log.sys]
+
+level = "debug"
+write = "stderr"
+
+[log.def]
+
+level = "info"
+write = "stderr"
+
+[cron]
+
+enable = false

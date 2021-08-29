@@ -13,6 +13,7 @@ require (
 	github.com/go-playground/universal-translator v0.17.0
 	github.com/go-redis/redis/v7 v7.4.0
 	github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869 // indirect
+	github.com/jinzhu/configor v1.2.1
 	github.com/joho/godotenv v1.3.0
 	github.com/jonboulle/clockwork v0.2.0 // indirect
 	github.com/lestrrat-go/file-rotatelogs v2.3.0+incompatible
@@ -31,6 +32,7 @@ require (
 	github.com/swaggo/swag v1.6.5
 	github.com/tebeka/strftime v0.1.5 // indirect
 	golang.org/x/crypto v0.0.0-20190611184440-5c40567a22f8
+	gopkg.in/alecthomas/kingpin.v2 v2.2.6
 	gopkg.in/go-playground/validator.v9 v9.29.1
 	gorm.io/driver/mysql v1.0.3
 	gorm.io/gorm v1.20.8

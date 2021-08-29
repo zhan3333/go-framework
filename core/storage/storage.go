@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"fmt"
 	uuid "github.com/satori/go.uuid"
+	"go-framework/app"
 	"go-framework/conf"
 	"io/ioutil"
 	"os"
@@ -24,7 +25,7 @@ func Init(storagePath string) {
 	Storage = storage{
 		AbsPath:  filepath.Join(storagePath, conf.Filesystems.Disks.Local.Root),
 		DiskName: conf.Filesystems.Default,
-		Uri:      conf.Url,
+		Uri:      app.Config.App.URL,
 	}
 }
 

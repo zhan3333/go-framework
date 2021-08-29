@@ -2,3 +2,5 @@
 .env
 vendor/
 go-framework
+!config/default.toml
+config/local.toml

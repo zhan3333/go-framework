@@ -3,6 +3,7 @@ package app
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"go-framework/conf"
 	"path/filepath"
 	"runtime"
 )
@@ -18,6 +19,7 @@ var (
 	// Booted 是否引导完毕
 	Booted bool
 	router *gin.Engine
+	Config *conf.Config
 )
 
 func init() {

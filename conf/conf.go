@@ -1,38 +1,64 @@
 package conf
 
 import (
-	gin2 "github.com/gin-gonic/gin"
-	"go-framework/core/env"
-	"os"
+	"time"
 
 	// 加载 env 文件
 	_ "go-framework/core/env"
-	"strings"
 )
 
-var (
-	GinModel string
-	Name     = os.Getenv("APP_NAME")
-	Url      = os.Getenv("APP_URL")
-	Env      = os.Getenv("APP_ENV")
-	Debug    = env.DefaultGetBool("DEBUG", false)
-	Host     = os.Getenv("APP_HOST")
-	Secret   = os.Getenv("SECRET")
-)
+type Config struct {
+	App       App
+	JWT       JWT
+	Databases map[string]DB    `toml:"db"`
+	Redis     map[string]Redis `toml:"redis"`
+	Log       map[string]Log   `toml:"log"`
+	Cron      Cron
+}
 
-func init() {
-	if !strings.EqualFold(Env, "local") && !strings.EqualFold(Env, "production") && !strings.EqualFold(Env, "testing") {
-		panic("env APP_ENV must be: local, production, testing")
-	}
-	switch Env {
-	case "testing":
-		GinModel = gin2.TestMode
-	case "local":
-		GinModel = gin2.DebugMode
-	case "production":
-		GinModel = gin2.ReleaseMode
-	}
-	if Secret == "" {
-		panic("env SECRET must set")
-	}
+type Cron struct {
+	Enable bool
+}
+
+type App struct {
+	Name  string
+	Port  int
+	Host  string
+	URL   string `json:"url"`
+	Env   string
+	Debug bool
+}
+
+type JWT struct {
+	Secret string
+	TTL    time.Duration
+	Issuer string
+}
+
+type DB struct {
+	Host      string
+	Port      int
+	Database  string
+	Username  string
+	Password  string
+	LogEnable bool
+}
+
+type Redis struct {
+	Host     string
+	Port     int
+	Password string
+	Index    int
+}
+
+type Log struct {
+	// Write 可选 stderr (默认) | file
+	Write    string
+	Level    string
+	FilePath string
+}
+
+var DefaultLog = Log{
+	Write: "stderr",
+	Level: "info",
 }

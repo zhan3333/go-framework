@@ -12,14 +12,14 @@ type Logger struct {
 }
 
 func (Logger) Error(err error, msg string, keysAndValues ...interface{}) {
-	glog.Channel("cron").WithFields(log.Fields{
+	glog.Sys.WithFields(log.Fields{
 		"err":           err,
 		"keysAndValues": keysAndValues,
 	}).Error(msg)
 }
 
 func (Logger) Info(msg string, keysAndValues ...interface{}) {
-	glog.Channel("cron").WithFields(log.Fields{
+	glog.Sys.WithFields(log.Fields{
 		"keysAndValues": keysAndValues,
 	}).Info(msg)
 }

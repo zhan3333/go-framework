@@ -3,7 +3,7 @@ package auth
 import (
 	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/pkg/errors"
-	"go-framework/conf"
+	"go-framework/app"
 	"go-framework/pkg/jwt"
 	"time"
 )
@@ -17,9 +17,9 @@ var (
 
 func NewJWT() JWT {
 	return JWT{
-		Secret:      conf.Secret,
-		ExpDuration: conf.JWT.TTL,
-		Issuer:      conf.JWT.Issuer,
+		Secret:      app.Config.JWT.Secret,
+		ExpDuration: app.Config.JWT.TTL,
+		Issuer:      app.Config.JWT.Issuer,
 	}
 }
 

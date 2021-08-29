@@ -17,10 +17,10 @@ import (
 // 1. gdb.Conn("connection name").GORM
 
 var (
-	// 默认连接配置key
+	// DefaultName 默认连接配置key
 	DefaultName = "default"
-	// 连接配置数组
-	ConnConfigs map[string]MySQLConf
+	// ConnConfigs 连接配置数组
+	ConnConfigs = make(map[string]MySQLConf)
 )
 
 // 数据库连接映射

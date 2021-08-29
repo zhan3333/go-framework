@@ -15,7 +15,7 @@ type Conf struct {
 
 var connections = map[string]*redis.Client{}
 var DefaultConn = "default"
-var Configs = map[string]Conf{}
+var Configs = make(map[string]Conf)
 
 func initConn(c Conf) (*redis.Client, error) {
 	var client *redis.Client
