@@ -24,7 +24,7 @@ func (w bodyLogWriter) WriteString(s string) (int, error) {
 	return w.ResponseWriter.WriteString(s)
 }
 
-// 记录请求与响应的数据
+// Logger 记录请求与响应的数据
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bodyLogWriter := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}

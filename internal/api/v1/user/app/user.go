@@ -1,19 +1,18 @@
 package app
 
 import (
-	"go-framework/core/http/resp"
+	"go-framework/core/lgo"
 	"go-framework/internal/domain"
 	"go-framework/internal/repo"
 )
 
-func UserList(_ UserListRequest, resp resp.Responser) {
+func UserList(ctx *lgo.Context, _ UserListRequest) error {
 	var (
 		err   error
 		users []repo.ApiUser
 	)
 	if users, err = domain.NewUser().List(); err != nil {
-		resp.ErrorEmpty(err)
-		return
+		return err
 	}
-	resp.SuccessBody(users)
+	return ctx.JSON(users)
 }

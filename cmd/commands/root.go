@@ -1,9 +1,6 @@
-package cmd
+package commands
 
-import (
-	"github.com/spf13/cobra"
-	"go-framework/core/boot"
-)
+import "github.com/spf13/cobra"
 
 var Root = &cobra.Command{
 	Use:   "artisan",
@@ -12,13 +9,4 @@ var Root = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},
-}
-
-func init() {
-	cobra.OnInitialize(initConfig)
-}
-
-func initConfig() {
-	boot.SetInCommand()
-	boot.Boot()
 }

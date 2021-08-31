@@ -1,4 +1,4 @@
-package cmd
+package commands
 
 import (
 	"errors"
@@ -47,7 +47,7 @@ var migrateCmd = &cobra.Command{
 
 var step int
 
-func init() {
+func LoadMigrate() {
 	migrateCmd.Flags().IntVarP(&step, "step", "s", 0, "migrate or rollback file num")
 	Root.AddCommand(migrateCmd)
 }

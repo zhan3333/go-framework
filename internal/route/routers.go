@@ -5,22 +5,22 @@ import (
 	"github.com/gin-gonic/gin"
 	"go-framework/app"
 	"go-framework/core/http"
-	storage2 "go-framework/core/storage"
+	"go-framework/core/lgo"
 	"go-framework/internal/route/api"
 	"go-framework/internal/route/swag"
-	"io"
-	"os"
+	"go-framework/pkg/glog"
 	"path"
 )
 
 var engine *gin.Engine
 
 func NewRouter() *gin.Engine {
-	f, _ := os.Create(storage2.Storage.FullPath("logs/route.log"))
-	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+	gin.DefaultWriter = glog.Sys.Writer()
 
 	engine = gin.New()
+	engine.Use(lgo.WithContext())
 	engine.Use(gin.Recovery(), gin.Logger())
+
 	// 加载默认中间件
 	engine.Use(http.Middleware.Def...)
 	pprof.Register(engine)

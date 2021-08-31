@@ -35,29 +35,41 @@ func SetInCommand() {
 }
 
 // Boot 应用启动入口
-func Boot() {
-	if config, err := loadConfig(); err != nil {
-		panic(fmt.Errorf("load config failed: %w", err))
-	} else {
-		app.Config = config
+func Boot() error {
+	err := func() error {
+		if config, err := loadConfig(); err != nil {
+			return fmt.Errorf("load config failed: %w", err)
+		} else {
+			app.Config = config
+		}
+		if err := bootLog(); err != nil {
+			return err
+		}
+
+		logBootInfo("boot start")
+
+		if err := bootDB(); err != nil {
+			return err
+		}
+
+		logBootInfo("database module init")
+
+		bootStorage()
+		bootHTTP()
+
+		if app.Config.Cron.Enable {
+			bootSchedule()
+		}
+
+		app.Booted = true
+		logBootInfo("boot success")
+		return nil
+	}()
+	if err != nil {
+		datetime := time.Now().Format("2006-01-02 15:04:05")
+		glog.Default.Errorf("[%s] boot failed: %s", datetime, err)
 	}
-
-	if err := bootLog(); err != nil {
-		panic(err)
-	}
-
-	logBootInfo("boot start")
-
-	bootDB()
-	bootStorage()
-	bootHTTP()
-
-	if app.Config.Cron.Enable {
-		bootSchedule()
-	}
-
-	app.Booted = true
-	logBootInfo("boot success")
+	return nil
 }
 
 func Destroy() {
@@ -66,9 +78,16 @@ func Destroy() {
 }
 
 func loadConfig() (*conf.Config, error) {
-	var configFile = kingpin.Flag("config", "load config file").Default("local.toml").String()
+	var defaultConfigFile = "local.toml"
+	var configFile *string
 	var config = conf.Config{}
-	kingpin.Parse()
+
+	if app.InConsole {
+		configFile = &defaultConfigFile
+	} else {
+		configFile = kingpin.Flag("config", "load config file").Default(defaultConfigFile).String()
+		kingpin.Parse()
+	}
 
 	if err := configor.Load(&config, path.Join("config", *configFile)); err != nil {
 		return nil, err
@@ -79,11 +98,6 @@ func loadConfig() (*conf.Config, error) {
 func logBootInfo(info string) {
 	datetime := time.Now().Format("2006-01-02 15:04:05")
 	glog.Default.Infof("[%s] boot: %s", datetime, info)
-}
-
-func logBootPanic(msg string, err error) {
-	datetime := time.Now().Format("2006-01-02 15:04:05")
-	glog.Default.Panicf("[%s] boot: %s: %+v", datetime, msg, err)
 }
 
 func bootLog() error {
@@ -145,7 +159,7 @@ func bootLog() error {
 	return nil
 }
 
-func bootDB() {
+func bootDB() error {
 	for k, v := range app.Config.Databases {
 		gdb.ConnConfigs[k] = gdb.MySQLConf{
 			Host:     v.Host,
@@ -156,7 +170,7 @@ func bootDB() {
 		}
 	}
 	if err := gdb.InitAll(); err != nil {
-		logBootPanic("init gdb module failed: %+v", err)
+		return fmt.Errorf("init gdb module failed: %w", err)
 	}
 
 	for k, v := range app.Config.Redis {
@@ -171,9 +185,9 @@ func bootDB() {
 	// load migrate files
 	migrate.DB = gdb.Def()
 	if err := migrate.InitMigrationTable(); err != nil {
-		logBootPanic("migrate.InitMigrationTable() failed", err)
+		return fmt.Errorf("migrate.InitMigrationTable() failed %w", err)
 	}
-	logBootInfo("database module init")
+	return nil
 }
 
 func bootStorage() {

@@ -1,4 +1,4 @@
-package cmd
+package commands
 
 import (
 	"fmt"
@@ -16,6 +16,6 @@ var versionCmd = &cobra.Command{
 	},
 }
 
-func init() {
+func LoadVersion() {
 	Root.AddCommand(versionCmd)
 }

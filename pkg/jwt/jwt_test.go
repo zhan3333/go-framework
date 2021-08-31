@@ -43,6 +43,7 @@ func TestJWTMapClaims(t *testing.T) {
 	tokenStr, err := j.Create(claims)
 	assert.Nil(t, err)
 	assert.NotEmpty(t, tokenStr)
+	t.Logf("token: %s", tokenStr)
 	claims2 := jwt2.MapClaims{}
 	token, err := j.Parse(tokenStr, &claims2)
 	assert.Nil(t, err)

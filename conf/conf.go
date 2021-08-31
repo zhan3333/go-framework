@@ -2,9 +2,6 @@ package conf
 
 import (
 	"time"
-
-	// 加载 env 文件
-	_ "go-framework/core/env"
 )
 
 type Config struct {

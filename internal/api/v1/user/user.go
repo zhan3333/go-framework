@@ -1,17 +1,17 @@
 package user
 
 import (
-	"github.com/gin-gonic/gin"
-	resp2 "go-framework/core/http/resp"
+	"go-framework/core/lgo"
 	"go-framework/internal/api/v1/user/app"
 )
 
-// 获取用户列表
-func List(c *gin.Context) {
+// List 获取用户列表
+func List(ctx *lgo.Context) error {
 	var (
-		req  app.UserListRequest
-		resp = c.MustGet("resp").(resp2.Responser)
+		req app.UserListRequest
 	)
-	resp.MustBind(&req)
-	app.UserList(req, resp)
+	if err := ctx.Bind(&req); err != nil {
+		return err
+	}
+	return app.UserList(ctx, req)
 }

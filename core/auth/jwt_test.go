@@ -51,6 +51,7 @@ func TestAuthJWT_Create(t *testing.T) {
 				return
 			}
 			// 进行校验
+			t.Log(got.Token)
 			claims, err := A.Parse(got.Token)
 			assert.Nil(t, err)
 			if !claims.Authorized {

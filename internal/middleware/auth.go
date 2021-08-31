@@ -1,9 +1,10 @@
 package middleware
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-framework/core/auth"
-	resp2 "go-framework/core/http/resp"
+	"go-framework/core/lgo"
 	"go-framework/internal/model"
 	"go-framework/internal/repo"
 	"strings"
@@ -14,19 +15,21 @@ func Auth() gin.HandlerFunc {
 		var token string
 		var user *model.User
 		var err error
-		resp := c.MustGet("resp").(resp2.Responser)
+
+		ctx := c.Request.Context().(*lgo.Context)
 		if token = GetToken(c); token == "" {
-			resp.ErrorEmpty(auth.ErrNoToken)
+			ctx.WriteErr(ctx.NoAuth("未提供登录凭据"))
 			c.Abort()
 			return
 		}
 		user, err = ParseUser(token)
 		if err != nil {
-			resp.ErrorEmpty(err)
+			ctx.WriteErr(err)
 			c.Abort()
 			return
 		}
-		c.Set("user", user)
+		ctx.User = user
+		c.Next()
 	}
 }
 
@@ -49,6 +52,7 @@ func ParseUser(token string) (*model.User, error) {
 	if user, err = repo.NewUser().First(userID); err != nil {
 		return nil, err
 	}
+	fmt.Println(user, err, userID)
 	if user == nil {
 		return nil, auth.ErrUserNoExists
 	}
