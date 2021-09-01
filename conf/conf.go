@@ -53,9 +53,12 @@ type Log struct {
 	Write    string
 	Level    string
 	FilePath string
+	// text / json (默认)
+	Format string
 }
 
 var DefaultLog = Log{
-	Write: "stderr",
-	Level: "info",
+	Write:  "stderr",
+	Level:  "info",
+	Format: "json",
 }

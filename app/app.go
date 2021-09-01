@@ -29,7 +29,7 @@ func init() {
 	StoragePath = fmt.Sprintf("%s/storage", Path)
 }
 
-// 获取项目基础路径的绝对值
+// GetBasePath 获取项目基础路径的绝对值
 func GetBasePath() string {
 	_, b, _, _ := runtime.Caller(0)
 	return filepath.Join(filepath.Dir(b), "../")

@@ -7,7 +7,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"go-framework/app"
 	"go-framework/conf"
-	"go-framework/core/http"
 	storage2 "go-framework/core/storage"
 	"go-framework/internal/cron"
 	routes "go-framework/internal/route"
@@ -104,59 +103,56 @@ func bootLog() error {
 	var ok bool
 	var sysLog conf.Log
 	var defLog conf.Log
+	var err error
 	if sysLog, ok = app.Config.Log["sys"]; !ok {
 		sysLog = conf.DefaultLog
 	}
-	if defLog, ok = app.Config.Log["sys"]; !ok {
+	if defLog, ok = app.Config.Log["def"]; !ok {
 		defLog = conf.DefaultLog
 	}
-	glog.Sys = logrus.New()
-	sysLevel, err := logrus.ParseLevel(sysLog.Level)
-	if err != nil {
-		return err
+
+	if glog.Sys, err = newLog(sysLog); err != nil {
+		return fmt.Errorf("create sys log failed: %w", err)
 	}
 
-	glog.Sys.SetLevel(sysLevel)
-	switch sysLog.Write {
-	case "stderr":
-		glog.Sys.SetOutput(os.Stderr)
-	case "file":
-		if sysLog.FilePath == "" {
-			return errors.New("sys log file path no set")
-		}
-		f, err := os.Create(sysLog.FilePath)
-		if err != nil {
-			return fmt.Errorf("open sys log file %s failed: %w", sysLog.FilePath, err)
-		}
-		glog.Sys.SetOutput(f)
-	default:
-		return fmt.Errorf("no supported write: %s", sysLog.Write)
+	if glog.Default, err = newLog(defLog); err != nil {
+		return fmt.Errorf("create default log failed: %w", err)
 	}
 
-	glog.Default = logrus.New()
-	defLevel, err := logrus.ParseLevel(defLog.Level)
-	if err != nil {
-		return err
-	}
-
-	glog.Default.SetLevel(defLevel)
-	switch sysLog.Write {
-	case "stderr":
-		glog.Sys.SetOutput(os.Stderr)
-	case "file":
-		if sysLog.FilePath == "" {
-			return errors.New("sys log file path no set")
-		}
-		f, err := os.Create(sysLog.FilePath)
-		if err != nil {
-			return fmt.Errorf("open sys log file %s failed: %w", sysLog.FilePath, err)
-		}
-		glog.Sys.SetOutput(f)
-	default:
-		return fmt.Errorf("no supported write: %s", sysLog.Write)
-	}
 	logBootInfo("log module init")
 	return nil
+}
+
+func newLog(log conf.Log) (*logrus.Logger, error) {
+	logger := logrus.New()
+	sysLevel, err := logrus.ParseLevel(log.Level)
+	if err != nil {
+		return nil, err
+	}
+
+	logger.SetLevel(sysLevel)
+	if log.Format == "json" {
+		logger.SetFormatter(&logrus.TextFormatter{})
+	} else {
+		logger.SetFormatter(&logrus.JSONFormatter{})
+	}
+
+	switch log.Write {
+	case "stderr":
+		logger.SetOutput(os.Stderr)
+	case "file":
+		if log.FilePath == "" {
+			return nil, errors.New("sys log file path no set")
+		}
+		f, err := os.Create(log.FilePath)
+		if err != nil {
+			return nil, fmt.Errorf("open log file %s failed: %w", log.FilePath, err)
+		}
+		logger.SetOutput(f)
+	default:
+		return nil, fmt.Errorf("no supported write: %s", log.Write)
+	}
+	return logger, nil
 }
 
 func bootDB() error {
@@ -196,7 +192,6 @@ func bootStorage() {
 }
 
 func bootHTTP() {
-	http.Init()
 	logBootInfo("middleware module init")
 	if !app.RunningInConsole() {
 		// 注册路由

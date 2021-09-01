@@ -15,7 +15,11 @@ type Context struct {
 
 func WithContext() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Request = c.Request.WithContext(&Context{Gin: c})
+		c.Request = c.Request.WithContext(&Context{
+			c.Request.Context(),
+			c,
+			nil,
+		})
 		c.Next()
 	}
 }

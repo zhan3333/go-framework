@@ -2,7 +2,6 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"go-framework/core/http"
 	"go-framework/core/lgo"
 	auth2 "go-framework/internal/api/v1/auth"
 	user2 "go-framework/internal/api/v1/user"
@@ -10,7 +9,7 @@ import (
 )
 
 func LoadApi(router *gin.Engine) {
-	api := router.Group("/api", http.Middleware.Api...)
+	api := router.Group("/api")
 	{
 		v1 := api.Group("/v1")
 		{

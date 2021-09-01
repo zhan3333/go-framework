@@ -4,8 +4,8 @@ import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"go-framework/app"
-	"go-framework/core/http"
 	"go-framework/core/lgo"
+	"go-framework/internal/middleware"
 	"go-framework/internal/route/api"
 	"go-framework/internal/route/swag"
 	"go-framework/pkg/glog"
@@ -18,11 +18,11 @@ func NewRouter() *gin.Engine {
 	gin.DefaultWriter = glog.Sys.Writer()
 
 	engine = gin.New()
+
 	engine.Use(lgo.WithContext())
 	engine.Use(gin.Recovery(), gin.Logger())
+	engine.Use(middleware.Logger())
 
-	// 加载默认中间件
-	engine.Use(http.Middleware.Def...)
 	pprof.Register(engine)
 	loadRoutes()
 	return engine
