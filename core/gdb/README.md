@@ -28,20 +28,22 @@ gorm v2 版本多连接, 使用需要预先配置 DefaultName ConnConfigs 两项
 ## 使用
 
 初始化
+
 ```go
 package main
+
 import (
-    "fmt"
-    "go-framework/pkg/gdb"
-    "gorm.io/gorm"
-    "gorm.io/gorm/logger"
-    "log"
-    "os"
-    "time"
+	"fmt"
+	"go-framework/core/gdb"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"log"
+	"os"
+	"time"
 )
 
-func main()  {
-    maxLiftTime := 30 * time.Second
+func main() {
+	maxLiftTime := 30 * time.Second
 	parseTime := true
 	gdb.DefaultName = "default"
 	gdb.ConnConfigs = map[string]gdb.MySQLConf{
@@ -64,11 +66,11 @@ func main()  {
 				),
 			},
 		},
-	} 
-    _, err := gdb.InitDef()
-    if err != nil {
-        panic(fmt.Sprintf("connection db failed: %+v\n", err))
-    }
+	}
+	_, err := gdb.InitDef()
+	if err != nil {
+		panic(fmt.Sprintf("connection db failed: %+v\n", err))
+	}
 }
 ```
 

@@ -3,8 +3,8 @@ package migrate
 import (
 	"errors"
 	"github.com/stretchr/testify/assert"
-	"go-framework/pkg/gdb"
-	"go-framework/pkg/migrate/testdata"
+	gdb2 "go-framework/core/gdb"
+	testdata2 "go-framework/core/migrate/testdata"
 	"gorm.io/gorm"
 	"math"
 	"os"
@@ -12,8 +12,8 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	gdb.ConnConfigs = map[string]gdb.MySQLConf{
-		gdb.DefaultName: {
+	gdb2.ConnConfigs = map[string]gdb2.MySQLConf{
+		gdb2.DefaultName: {
 			Host:     "127.0.0.1",
 			Port:     "3306",
 			Username: "root",
@@ -21,7 +21,7 @@ func TestMain(m *testing.M) {
 			Database: "test",
 		},
 	}
-	DB = gdb.Def()
+	DB = gdb2.Def()
 	err := DelAll()
 	if err != nil {
 		panic(err)
@@ -44,7 +44,7 @@ func TestGetAllMigrations(t *testing.T) {
 func TestGetNeedMigrateFiles(t *testing.T) {
 	assert.Nil(t, DelAll())
 	assert.Nil(t, InitMigrationTable())
-	Register(&testdata.TestFile{})
+	Register(&testdata2.TestFile{})
 	needMigrateFiles := getNeedMigrateFiles(files, math.MaxInt64)
 	assert.NotNil(t, needMigrateFiles)
 	assert.Equal(t, len(files), len(needMigrateFiles))
@@ -63,7 +63,7 @@ func TestGetNeedMigrateFiles(t *testing.T) {
 func TestGetNeedRollbackKeys(t *testing.T) {
 	assert.Nil(t, DelAll())
 	assert.Nil(t, InitMigrationTable())
-	Register(&testdata.TestFile{})
+	Register(&testdata2.TestFile{})
 	var needRollbackMs []File
 	needRollbackMs = getNeedRollbackKeys(1)
 	assert.Equal(t, 0, len(needRollbackMs))
@@ -72,7 +72,7 @@ func TestGetNeedRollbackKeys(t *testing.T) {
 		Migration: files[0].Key(),
 		Batch:     1,
 	}
-	gdb.Def().Create(&m)
+	gdb2.Def().Create(&m)
 
 	needRollbackMs = getNeedRollbackKeys(1)
 	assert.Equal(t, 1, len(needRollbackMs))
@@ -82,7 +82,7 @@ func TestGetNeedRollbackKeys(t *testing.T) {
 func TestGetNextBatchNo(t *testing.T) {
 	assert.Nil(t, DelAll())
 	assert.Nil(t, InitMigrationTable())
-	Register(&testdata.TestFile{})
+	Register(&testdata2.TestFile{})
 	var nextBatch uint
 	nextBatch = getNextBatchNo()
 	assert.Equal(t, uint(1), nextBatch)
@@ -90,7 +90,7 @@ func TestGetNextBatchNo(t *testing.T) {
 		Migration: files[0].Key(),
 		Batch:     nextBatch,
 	}
-	gdb.Def().Create(&m)
+	gdb2.Def().Create(&m)
 
 	nextBatch = getNextBatchNo()
 	assert.Equal(t, uint(2), nextBatch)
@@ -126,7 +126,7 @@ func TestMigrate(t *testing.T) {
 	exist, err := TableExist("test")
 	assert.Nil(t, err)
 	assert.False(t, exist)
-	Register(&testdata.TestFile{})
+	Register(&testdata2.TestFile{})
 	// Migrate
 	assert.Nil(t, Migrate(1))
 	exist, err = TableExist("test")
@@ -148,7 +148,7 @@ func TestFresh(t *testing.T) {
 	exist, err := TableExist("test")
 	assert.Nil(t, err)
 	assert.False(t, exist)
-	Register(&testdata.TestFile{})
+	Register(&testdata2.TestFile{})
 
 	// Migrate
 	assert.Nil(t, Migrate(1))
@@ -170,7 +170,7 @@ func TestTruncate(t *testing.T) {
 	exist, err := TableExist("test")
 	assert.Nil(t, err)
 	assert.False(t, exist)
-	Register(&testdata.TestFile{})
+	Register(&testdata2.TestFile{})
 
 	// Migrate
 	assert.Nil(t, Migrate(1))
@@ -178,17 +178,17 @@ func TestTruncate(t *testing.T) {
 	assert.Nil(t, err)
 	assert.True(t, exist)
 
-	test := testdata.Test{
+	test := testdata2.Test{
 		ID: 1,
 	}
 	assert.Nil(t, DB.Create(&test).Error)
-	test2 := testdata.Test{}
+	test2 := testdata2.Test{}
 	assert.Nil(t, DB.First(&test2).Error)
 	assert.True(t, test2.ID != 0)
 
 	// 清空表数据
 	assert.Nil(t, Truncate("test"))
-	test3 := testdata.Test{}
+	test3 := testdata2.Test{}
 	err = DB.First(&test3).Error
 	t.Logf("%+v", err)
 	assert.True(t, errors.Is(err, gorm.ErrRecordNotFound))

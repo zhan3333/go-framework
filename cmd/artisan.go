@@ -19,7 +19,7 @@ func init() {
 	cobra.OnInitialize(func() {
 		boot.SetInCommand()
 		fmt.Println("boot start")
-		if err := boot.Boot(); err != nil {
+		if err := boot.New(); err != nil {
 			fmt.Println("boot failed: %w", err)
 		}
 		fmt.Println("booted")

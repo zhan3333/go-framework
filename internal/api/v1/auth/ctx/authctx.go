@@ -1,4 +1,4 @@
-package app
+package ctx
 
 type RegisterReq struct {
 	Name     string `json:"name" form:"name" binding:"required" faker:"first_name" example:"zhan" comment:"姓名"`

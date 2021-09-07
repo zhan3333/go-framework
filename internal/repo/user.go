@@ -2,8 +2,8 @@ package repo
 
 import (
 	"github.com/pkg/errors"
+	gdb2 "go-framework/core/gdb"
 	"go-framework/internal/model"
-	"go-framework/pkg/gdb"
 	"gorm.io/gorm"
 )
 
@@ -24,7 +24,7 @@ func (User) List() ([]ApiUser, error) {
 		users []ApiUser
 		err   error
 	)
-	err = gdb.Def().Model(&model.User{}).Find(&users).Error
+	err = gdb2.Def().Model(&model.User{}).Find(&users).Error
 	if err != nil {
 		return nil, errors.Wrap(err, MsgQueryFailed)
 	}
@@ -45,7 +45,7 @@ func (User) Store(userParams StoreUserParams) (*model.User, error) {
 	user.Name = userParams.Name
 	user.Email = userParams.Email
 	user.Password = userParams.Password
-	err = gdb.Def().Create(&user).Error
+	err = gdb2.Def().Create(&user).Error
 	if err != nil {
 		return nil, errors.Wrap(err, MsgCreateFailed)
 	}
@@ -60,7 +60,7 @@ func (User) IsEmailExists(email string) (bool, error) {
 		user model.User
 		err  error
 	)
-	err = gdb.Def().
+	err = gdb2.Def().
 		Select([]string{"id"}).
 		Where(&model.User{Email: email}).
 		First(&user).Error
@@ -78,7 +78,7 @@ func (User) FirstUserByEmail(email string) (*model.User, error) {
 		user = &model.User{}
 		err  error
 	)
-	err = gdb.Def().
+	err = gdb2.Def().
 		Where(&model.User{Email: email}).
 		First(user).Error
 	if err != nil {
@@ -95,7 +95,7 @@ func (User) First(userID uint64) (*model.User, error) {
 		user = &model.User{}
 		err  error
 	)
-	err = gdb.Def().First(user, userID).Error
+	err = gdb2.Def().First(user, userID).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil

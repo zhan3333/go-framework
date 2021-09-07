@@ -3,7 +3,7 @@ package migrate
 import (
 	"fmt"
 	"github.com/pkg/errors"
-	"go-framework/pkg/gdb"
+	gdb2 "go-framework/core/gdb"
 	"math"
 )
 
@@ -20,15 +20,15 @@ func (Migration) TableName() string {
 // 迁移文件接口
 type File interface {
 	Key() string
-	Up(tx *gdb.Entry) error
-	Down(tx *gdb.Entry) error
+	Up(tx *gdb2.Entry) error
+	Down(tx *gdb2.Entry) error
 }
 
 // 定义的迁移文件需要在这里注册
 var files []File
 
 // 使用的数据库连接
-var DB *gdb.Entry
+var DB *gdb2.Entry
 var DefaultTableName = "migrations"
 
 func InitMigrationTable() error {

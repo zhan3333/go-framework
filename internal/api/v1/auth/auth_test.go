@@ -1,48 +1,60 @@
 package auth_test
 
 import (
+	"encoding/json"
 	"github.com/bxcodec/faker/v3"
 	"github.com/stretchr/testify/assert"
-	app2 "go-framework/app"
-	_ "go-framework/core/boot/http"
-	"go-framework/core/http/resp"
-	"go-framework/internal/api/v1/auth/app"
+	"go-framework/app"
+	"go-framework/core/boot"
+	"go-framework/core/gdb"
+	"go-framework/core/lgo"
+	"go-framework/internal/api/v1/auth/ctx"
 	"go-framework/internal/domain"
 	"go-framework/internal/model"
 	"go-framework/internal/repo"
-	"go-framework/pkg/gdb"
-	"go-framework/pkg/test"
-	"go-framework/pkg/util"
 	"net/http"
+	"net/http/httptest"
+	"os"
 	"testing"
 )
 
-var httpTest = test.New(app2.GetRouter())
+var test *lgo.Test
+
+func TestMain(m *testing.M) {
+	if err := boot.New(
+		boot.WithConfigFile(os.Getenv("LGO_TEST_FILE")),
+		boot.WithRoutePrint(false),
+	); err != nil {
+		panic(err)
+	}
+	test = lgo.New(app.GetRouter())
+	m.Run()
+}
 
 // 测试正常注册
 func TestRegister(t *testing.T) {
-	request := app.RegisterReq{}
+	request := ctx.RegisterReq{}
 	assert.Nil(t, faker.FakeData(&request))
 
-	httpResp := httpTest.Post("/api/v1/auth/register", request)
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/register", lgo.ToReader(request))
+	req.Header.Set("content-type", "application/json")
+	resp := test.Send(req)
 
-	assert.Equal(t, http.StatusOK, httpResp.Code)
-	response := resp.Parse(httpResp.Body.Bytes())
-	assert.Equal(t, resp.CodeSuccess, response.Code)
-	util.Dump(response)
+	assert.Equal(t, http.StatusOK, resp.Code)
+
+	t.Log(resp.Body.String())
 }
 
 // 测试参数校验不通过
 func TestStoreParamsErr(t *testing.T) {
-	request := app.RegisterReq{}
+	request := ctx.RegisterReq{}
 
-	httpResp := httpTest.Post("/api/v1/auth/register", request)
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/register", lgo.ToReader(request))
+	req.Header.Set("content-type", "application/json")
+	resp := test.Send(req)
 
-	assert.Equal(t, http.StatusOK, httpResp.Code)
-	response := resp.Parse(httpResp.Body.Bytes())
-	assert.Equal(t, resp.CodeFailed, response.Code)
-	assert.Contains(t, response.Message, "为必填字段")
-	util.Dump(response)
+	assert.Equal(t, http.StatusBadRequest, resp.Code)
+	t.Log(resp.Body.String())
 }
 
 // 测试邮箱已被使用
@@ -50,19 +62,24 @@ func TestRegisterEmailUsed(t *testing.T) {
 	user := model.User{}
 	assert.Nil(t, gdb.Def().First(&user).Error)
 
-	request := app.RegisterReq{
+	request := ctx.RegisterReq{
 		Email:    user.Email,
 		Name:     faker.Name(),
 		Password: faker.Password(),
 	}
 
-	httpResp := httpTest.Post("/api/v1/auth/register", request)
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/register", lgo.ToReader(request))
+	req.Header.Set("content-type", "application/json")
+	resp := test.Send(req)
 
-	assert.Equal(t, http.StatusOK, httpResp.Code)
-	response := resp.Parse(httpResp.Body.Bytes())
-	assert.Equal(t, resp.CodeFailed, response.Code)
-	assert.Contains(t, response.Message, "邮箱已被使用")
-	util.Dump(response)
+	assert.Equal(t, http.StatusBadRequest, resp.Code)
+	t.Log(resp.Body.String())
+
+	body := struct {
+		Message string
+	}{}
+	assert.NoError(t, json.Unmarshal(resp.Body.Bytes(), &body))
+	assert.Equal(t, "邮箱已被使用", body.Message)
 }
 
 func TestLogin(t *testing.T) {
@@ -74,20 +91,25 @@ func TestLogin(t *testing.T) {
 	})
 	assert.Nil(t, err)
 
-	request := app.LoginReq{
+	request := ctx.LoginReq{
 		Email:    user.Email,
 		Password: pwd,
 	}
 
-	httpResp := httpTest.Post("/api/v1/auth/login", request)
+	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/login", lgo.ToReader(request))
+	req.Header.Set("content-type", "application/json")
+	resp := test.Send(req)
 
-	assert.Equal(t, http.StatusOK, httpResp.Code)
-	response := resp.Parse(httpResp.Body.Bytes())
-	assert.Equal(t, resp.CodeSuccess, response.Code)
-	assert.Contains(t, response.Message, "success")
-	busBody := app.LoginResp{}
-	assert.Nil(t, util.MapToStruct(response.Body.(map[string]interface{}), &busBody))
-	assert.NotEmpty(t, busBody.AccessToken)
-	assert.NotEmpty(t, busBody.Type)
-	assert.NotEmpty(t, busBody.ExpiresAt)
+	assert.Equal(t, http.StatusOK, resp.Code)
+	t.Log(resp.Body.String())
+
+	body := struct {
+		AccessToken string `json:"access_token"`
+		Type        string `json:"type"`
+		ExpiresAt   int64  `json:"expires_at"`
+	}{}
+	assert.NoError(t, json.Unmarshal(resp.Body.Bytes(), &body))
+	assert.NotEmpty(t, body.AccessToken)
+	assert.NotEmpty(t, body.Type)
+	assert.NotEmpty(t, body.ExpiresAt)
 }

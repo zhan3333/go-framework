@@ -18,8 +18,6 @@ Email: grianchan@gmail.com
 - toml 配置文件加载
 - 待完善的储存系统
 
-## Change Log
-
 ## 如何运行
 
 ### 加载依赖
@@ -100,6 +98,10 @@ go run main.go
 [gin 官方中间件](https://github.com/gin-contrib)
 
 [gin-pprof](https://github.com/gin-contrib/pprof)
+
+## 测试
+
+通过环境变量 `LGO_TEST_FILE=~/go-framework/config.local` 来指定测试时使用的配置文件
 
 ## 其它
 

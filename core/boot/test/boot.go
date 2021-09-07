@@ -7,5 +7,5 @@ import "go-framework/core/boot"
 func init() {
 	boot.SetInTest()
 	boot.SetInCommand()
-	_ = boot.Boot()
+	_ = boot.New()
 }

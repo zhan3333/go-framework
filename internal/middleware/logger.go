@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	"go-framework/pkg/glog"
+	glog2 "go-framework/core/glog"
 	"io/ioutil"
 	"time"
 )
@@ -51,7 +51,7 @@ func Logger() gin.HandlerFunc {
 		//结束时间
 		endTime := time.Now()
 
-		glog.Sys.WithFields(log.Fields{
+		glog2.Sys.WithFields(log.Fields{
 			"request_uri":    c.Request.RequestURI,
 			"request_method": c.Request.Method,
 			"client_ip":      c.ClientIP(),

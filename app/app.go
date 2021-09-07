@@ -1,6 +1,7 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go-framework/conf"
@@ -56,4 +57,11 @@ func GetRouter() *gin.Engine {
 		panic("router not set")
 	}
 	return router
+}
+
+func Run() error {
+	if router == nil {
+		return errors.New("router no set")
+	}
+	return router.Run(fmt.Sprintf("%s:%d", Config.App.Host, Config.App.Port))
 }

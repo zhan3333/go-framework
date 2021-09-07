@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
-	"go-framework/pkg/migrate"
+	migrate2 "go-framework/core/migrate"
 )
 
 var migrateCmd = &cobra.Command{
@@ -26,7 +26,7 @@ var migrateCmd = &cobra.Command{
 			if step == 0 {
 				step = 999
 			}
-			if err = migrate.Migrate(step); err != nil {
+			if err = migrate2.Migrate(step); err != nil {
 				fmt.Printf("migrate failed: %+v\n", err)
 			} else {
 				fmt.Println("migrate ok")
@@ -36,7 +36,7 @@ var migrateCmd = &cobra.Command{
 			if step == 0 {
 				step = 1
 			}
-			if err = migrate.Rollback(step); err != nil {
+			if err = migrate2.Rollback(step); err != nil {
 				fmt.Printf("rollback failed: %+v\n", err)
 			} else {
 				fmt.Println("migrate ok")

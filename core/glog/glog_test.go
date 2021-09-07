@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	"go-framework/pkg/glog"
+	glog2 "go-framework/core/glog"
 	"io/ioutil"
 	"log"
 	"os"
@@ -14,11 +14,11 @@ import (
 )
 
 func TestLog(t *testing.T) {
-	glog.LogConfigs = map[string]glog.Log{
-		glog.DefLogChannel: {
-			Driver:       glog.DAILY,
+	glog2.LogConfigs = map[string]glog2.Log{
+		glog2.DefLogChannel: {
+			Driver:       glog2.DAILY,
 			Path:         "logs/def.log",
-			Level:        glog.DebugLevel,
+			Level:        glog2.DebugLevel,
 			Days:         30,
 			LogFormatter: nil,
 			ReportCall:   false,
@@ -26,25 +26,25 @@ func TestLog(t *testing.T) {
 		},
 	}
 	log.Print("log by log")
-	glog.Def().Print("log by glog.Default()")
-	glog.Channel("gin").Print("log by glog.Channel(\"gin\")")
-	glog.Channel("gin").Print("log by glog.Channel(\"gin\")")
+	glog2.Def().Print("log by glog.Default()")
+	glog2.Channel("gin").Print("log by glog.Channel(\"gin\")")
+	glog2.Channel("gin").Print("log by glog.Channel(\"gin\")")
 }
 
 func TestAllChannel(t *testing.T) {
-	glog.LogConfigs = map[string]glog.Log{
-		glog.DefLogChannel: {
-			Driver:       glog.DAILY,
+	glog2.LogConfigs = map[string]glog2.Log{
+		glog2.DefLogChannel: {
+			Driver:       glog2.DAILY,
 			Path:         "logs/def.log",
-			Level:        glog.DebugLevel,
+			Level:        glog2.DebugLevel,
 			Days:         30,
 			LogFormatter: nil,
 			ReportCall:   false,
 			Hooks:        nil,
 		},
 	}
-	for name := range glog.LogConfigs {
-		glog.Channel(name).Printf("Test")
+	for name := range glog2.LogConfigs {
+		glog2.Channel(name).Printf("Test")
 	}
 }
 
@@ -56,11 +56,11 @@ func (Format) Format(entry *logrus.Entry) ([]byte, error) {
 }
 
 func TestSetDefaultFormatter(t *testing.T) {
-	glog.LogConfigs = map[string]glog.Log{
-		glog.DefLogChannel: {
-			Driver:       glog.DAILY,
+	glog2.LogConfigs = map[string]glog2.Log{
+		glog2.DefLogChannel: {
+			Driver:       glog2.DAILY,
 			Path:         "logs/def.log",
-			Level:        glog.DebugLevel,
+			Level:        glog2.DebugLevel,
 			Days:         30,
 			LogFormatter: nil,
 			ReportCall:   false,
@@ -68,75 +68,75 @@ func TestSetDefaultFormatter(t *testing.T) {
 		},
 	}
 	newFormat := Format{}
-	glog.LogConfigs = map[string]glog.Log{
-		glog.DefLogChannel: {
-			Driver:       glog.DAILY,
+	glog2.LogConfigs = map[string]glog2.Log{
+		glog2.DefLogChannel: {
+			Driver:       glog2.DAILY,
 			Path:         "logs/def.log",
-			Level:        glog.DebugLevel,
+			Level:        glog2.DebugLevel,
 			Days:         30,
 			LogFormatter: nil,
 			ReportCall:   false,
 			Hooks:        nil,
 		},
 	}
-	glog.DefaultFormat = newFormat
-	glog.ReloadChannels()
-	glog.Def().WithFields(logrus.Fields{
+	glog2.DefaultFormat = newFormat
+	glog2.ReloadChannels()
+	glog2.Def().WithFields(logrus.Fields{
 		"test": "123",
 	}).Info("test")
 }
 
 func TestOut(t *testing.T) {
-	glog.LogConfigs = map[string]glog.Log{
-		glog.DefLogChannel: {
-			Driver:       glog.DAILY,
+	glog2.LogConfigs = map[string]glog2.Log{
+		glog2.DefLogChannel: {
+			Driver:       glog2.DAILY,
 			Path:         "logs/def.log",
-			Level:        glog.DebugLevel,
+			Level:        glog2.DebugLevel,
 			Days:         30,
 			LogFormatter: nil,
 			ReportCall:   false,
 			Hooks:        nil,
 		},
 	}
-	glog.LogConfigs = map[string]glog.Log{
-		glog.DefLogChannel: {
-			Driver:       glog.DAILY,
+	glog2.LogConfigs = map[string]glog2.Log{
+		glog2.DefLogChannel: {
+			Driver:       glog2.DAILY,
 			Path:         "logs/test.log",
-			Level:        glog.DebugLevel,
+			Level:        glog2.DebugLevel,
 			Days:         30,
 			LogFormatter: nil,
 			ReportCall:   false,
 			Hooks:        nil,
 		},
 	}
-	glog.ReloadChannels()
+	glog2.ReloadChannels()
 	// channel write
-	glog.Def().WithFields(logrus.Fields{
+	glog2.Def().WithFields(logrus.Fields{
 		"test": "log from glog.Def().Info()",
 	}).Info("test")
 	// out obj write
-	_, err := glog.Def().Out.Write([]byte("log from glog.Def().Out"))
+	_, err := glog2.Def().Out.Write([]byte("log from glog.Def().Out"))
 	assert.Nil(t, err)
 }
 
 func TestWrite(t *testing.T) {
-	glog.LogConfigs = map[string]glog.Log{
-		glog.DefLogChannel: {
-			Driver: glog.DAILY,
+	glog2.LogConfigs = map[string]glog2.Log{
+		glog2.DefLogChannel: {
+			Driver: glog2.DAILY,
 			Path:   "logs/test.log",
-			Level:  glog.DebugLevel,
+			Level:  glog2.DebugLevel,
 			Days:   30,
 		},
 	}
-	glog.ReloadChannels()
-	glog.Def().WithFields(logrus.Fields{
+	glog2.ReloadChannels()
+	glog2.Def().WithFields(logrus.Fields{
 		"test": "write from glog.Def()",
 	}).Info("test")
-	glog.Def().Write.Write([]byte("write from glog.Def().Write"))
+	glog2.Def().Write.Write([]byte("write from glog.Def().Write"))
 }
 
 func TestDefaultChannel(t *testing.T) {
-	glog.Def().Infoln("test")
+	glog2.Def().Infoln("test")
 }
 
 //测试 Single 驱动
@@ -145,15 +145,15 @@ func TestSingleDriver(t *testing.T) {
 	if _, err := os.Stat(file); (err != nil && os.IsExist(err)) || err == nil {
 		assert.Nil(t, os.Remove(file))
 	}
-	glog.LogConfigs = map[string]glog.Log{
-		glog.DefLogChannel: {
-			Driver: glog.SINGLE,
+	glog2.LogConfigs = map[string]glog2.Log{
+		glog2.DefLogChannel: {
+			Driver: glog2.SINGLE,
 			Path:   "logs/test.log",
-			Level:  glog.DebugLevel,
+			Level:  glog2.DebugLevel,
 			Days:   30,
 		},
 	}
-	glog.Def().Infoln("test")
+	glog2.Def().Infoln("test")
 	b, err := ioutil.ReadFile("logs/test.log")
 	assert.Nil(t, err)
 	t.Log(string(b))
@@ -168,18 +168,18 @@ func TestSingleDriver(t *testing.T) {
 //测试 Daily 驱动
 func TestDailyLog(t *testing.T) {
 	file := fmt.Sprintf("logs/test-%s.log", time.Now().Format("2006-01-02"))
-	glog.LogConfigs = map[string]glog.Log{
-		glog.DefLogChannel: {
-			Driver: glog.DAILY,
+	glog2.LogConfigs = map[string]glog2.Log{
+		glog2.DefLogChannel: {
+			Driver: glog2.DAILY,
 			Path:   "logs/test.log",
-			Level:  glog.DebugLevel,
+			Level:  glog2.DebugLevel,
 			Days:   30,
 		},
 	}
 	if _, err := os.Stat(file); (err != nil && os.IsExist(err)) || err == nil {
 		assert.Nil(t, os.Remove(file))
 	}
-	glog.Def().Infoln("test")
+	glog2.Def().Infoln("test")
 	b, err := ioutil.ReadFile(file)
 	assert.Nil(t, err)
 	t.Log(string(b))

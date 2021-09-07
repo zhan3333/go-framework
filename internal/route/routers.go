@@ -8,14 +8,49 @@ import (
 	"go-framework/internal/middleware"
 	"go-framework/internal/route/api"
 	"go-framework/internal/route/swag"
-	"go-framework/pkg/glog"
+	"io"
+	"os"
 	"path"
 )
 
 var engine *gin.Engine
 
-func NewRouter() *gin.Engine {
-	gin.DefaultWriter = glog.Sys.Writer()
+type Options struct {
+	writer    io.Writer
+	errWriter io.Writer
+}
+
+type Option func(opts *Options)
+
+func WithWriter(w io.Writer) Option {
+	return func(opts *Options) {
+		opts.writer = w
+	}
+}
+
+func WithErrWriter(w io.Writer) Option {
+	return func(opts *Options) {
+		opts.errWriter = w
+	}
+}
+
+func NewRouter(opts ...Option) *gin.Engine {
+	options := Options{
+		writer:    os.Stdout,
+		errWriter: os.Stderr,
+	}
+
+	for _, opt := range opts {
+		opt(&options)
+	}
+
+	if options.writer != nil {
+		gin.DefaultWriter = options.writer
+	}
+
+	if options.errWriter != nil {
+		gin.DefaultErrorWriter = options.errWriter
+	}
 
 	engine = gin.New()
 

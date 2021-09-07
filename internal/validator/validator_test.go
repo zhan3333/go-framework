@@ -10,7 +10,7 @@ import (
 
 func TestMain(m *testing.M) {
 	boot.SetInTest()
-	_ = boot.Boot()
+	_ = boot.New()
 	m.Run()
 }
 

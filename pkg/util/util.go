@@ -56,7 +56,7 @@ func JSONParse(d string, v interface{}) error {
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-// 产生指定长度的随机字符串
+// RandStringN 产生指定长度的随机字符串
 func RandStringN(n int) string {
 	if n <= 0 {
 		return ""

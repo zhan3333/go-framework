@@ -2,7 +2,7 @@ package gdb_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go-framework/pkg/gdb"
+	gdb2 "go-framework/core/gdb"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"log"
@@ -21,9 +21,9 @@ type User struct {
 func TestMain(m *testing.M) {
 	maxLiftTime := 30 * time.Second
 	parseTime := true
-	gdb.DefaultName = "default"
-	gdb.ConnConfigs = map[string]gdb.MySQLConf{
-		gdb.DefaultName: {
+	gdb2.DefaultName = "default"
+	gdb2.ConnConfigs = map[string]gdb2.MySQLConf{
+		gdb2.DefaultName: {
 			Host:        "127.0.0.1",
 			Port:        "3306",
 			Username:    "root",
@@ -48,33 +48,33 @@ func TestMain(m *testing.M) {
 
 func TestConn(t *testing.T) {
 	var err error
-	_, err = gdb.InitDef()
+	_, err = gdb2.InitDef()
 	assert.Nil(t, err)
-	err = gdb.DB.SQLDB.Ping()
+	err = gdb2.DB.SQLDB.Ping()
 	assert.Nil(t, err)
-	err = gdb.Def().SQLDB.Ping()
+	err = gdb2.Def().SQLDB.Ping()
 	assert.Nil(t, err)
 }
 
 func TestQuery(t *testing.T) {
 	var err error
-	_, err = gdb.InitDef()
+	_, err = gdb2.InitDef()
 	assert.Nil(t, err)
-	assert.Nil(t, gdb.Def().SQLDB.Ping())
+	assert.Nil(t, gdb2.Def().SQLDB.Ping())
 }
 
 func TestMigrate(t *testing.T) {
 	var err error
-	err = gdb.Def().AutoMigrate(&User{})
+	err = gdb2.Def().AutoMigrate(&User{})
 	assert.Nil(t, err)
 }
 
 func TestGetTables(t *testing.T) {
 	var err error
-	err = gdb.Def().AutoMigrate(&User{})
+	err = gdb2.Def().AutoMigrate(&User{})
 	assert.Nil(t, err)
 	var tables []string
-	err = gdb.Def().Raw("show tables").Scan(&tables).Error
+	err = gdb2.Def().Raw("show tables").Scan(&tables).Error
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(tables))
 	assert.Equal(t, "users", tables[0])
@@ -82,10 +82,10 @@ func TestGetTables(t *testing.T) {
 
 func TestInsertMany(t *testing.T) {
 	var err error
-	err = gdb.Def().AutoMigrate(&User{})
+	err = gdb2.Def().AutoMigrate(&User{})
 	assert.Nil(t, err)
 	var usersCount int64
-	err = gdb.Def().Table("users").Count(&usersCount).Error
+	err = gdb2.Def().Table("users").Count(&usersCount).Error
 	assert.Nil(t, err)
 	var users = []User{
 		{
@@ -98,17 +98,17 @@ func TestInsertMany(t *testing.T) {
 			Password: "a",
 		},
 	}
-	err = gdb.Def().CreateInBatches(&users, 1).Error
+	err = gdb2.Def().CreateInBatches(&users, 1).Error
 	assert.Nil(t, err)
 	var newUsersCount int64
-	err = gdb.Def().Table("users").Count(&newUsersCount).Error
+	err = gdb2.Def().Table("users").Count(&newUsersCount).Error
 	assert.Equal(t, newUsersCount, usersCount+2)
 }
 
 // 测试批量操作
 func TestChunk(t *testing.T) {
 	var results []User
-	result := gdb.Def().FindInBatches(&results, 2, func(tx *gorm.DB, batch int) error {
+	result := gdb2.Def().FindInBatches(&results, 2, func(tx *gorm.DB, batch int) error {
 		for _, r := range results {
 			t.Logf("%+v \n", r)
 		}
