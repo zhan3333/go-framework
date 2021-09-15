@@ -76,8 +76,9 @@ go run main.go
     - [x] JWT 中间件加入
     - [x] cors 跨域中间件 (github.com/gin-contrib/cors)
     - [] 请求速率 throttle 中间件
-- [] pprof 性能监控 (使用 `go tool pprof http://localhost:8090/debug/pprof/heap` 访问)
-- [] 配置模块改用 github.com/BurntSushi/toml
+- [x] pprof 性能监控 (使用 `go tool pprof http://localhost:8090/debug/pprof/heap` 访问)
+- [x] 配置模块改用 github.com/BurntSushi/toml
+- [] 使用 context 传递上下文
 
 ## 相关文档
 
