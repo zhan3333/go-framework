@@ -5,12 +5,17 @@ import (
 	"go-framework/core/boot"
 	"go-framework/internal/validator"
 	v "gopkg.in/go-playground/validator.v9"
+	"os"
 	"testing"
 )
 
 func TestMain(m *testing.M) {
-	boot.SetInTest()
-	_ = boot.New()
+	if err := boot.New(
+		boot.WithConfigFile(os.Getenv("LGO_TEST_FILE")),
+		boot.WithRoutePrint(false),
+	); err != nil {
+		panic(err)
+	}
 	m.Run()
 }
 

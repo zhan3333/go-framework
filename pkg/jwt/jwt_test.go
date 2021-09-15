@@ -29,7 +29,7 @@ func TestJWTCustomize(t *testing.T) {
 	claims2 := AuthJWTClaims{}
 	token, err := j.Parse(tokenStr, &claims2)
 	assert.Nil(t, err)
-	assert.Nil(t, token.Valid)
+	assert.True(t, token.Valid)
 	t.Log(claims2)
 	t.Log(token.Claims)
 }

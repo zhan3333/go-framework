@@ -4,13 +4,24 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"go-framework/app"
-	_ "go-framework/core/boot/console"
+	"go-framework/core/boot"
 	storage2 "go-framework/core/storage"
 	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	"testing"
 )
+
+func TestMain(m *testing.M) {
+	if err := boot.New(
+		boot.WithConfigFile(os.Getenv("LGO_TEST_FILE")),
+		boot.WithRoutePrint(false),
+	); err != nil {
+		panic(err)
+	}
+	m.Run()
+}
 
 func TestStorageSaveBase64(t *testing.T) {
 	frontImgBase64, _ := ioutil.ReadFile(filepath.Join(app.TestPath, "testdata", "id-card-back-base64.txt"))

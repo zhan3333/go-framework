@@ -41,6 +41,10 @@ cp config/default.tmol config/local.toml
 go run main.go
 ```
 
+### 测试
+
+配置 env LGO_TEST_FILE={path}/config/local.toml，测试中会自动加载框架
+
 默认开启端口 `http://127.0.0.1:8080` 访问服务
 
 ## Roadmap

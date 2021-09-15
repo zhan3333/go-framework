@@ -3,14 +3,14 @@ package gredis_test
 import (
 	redis2 "github.com/go-redis/redis/v7"
 	"github.com/stretchr/testify/assert"
-	gredis2 "go-framework/core/gredis"
+	"go-framework/core/gredis"
 	"testing"
 	"time"
 )
 
 func TestMain(m *testing.M) {
-	gredis2.Configs = map[string]gredis2.Conf{
-		gredis2.DefaultConn: {
+	gredis.Configs = map[string]gredis.Conf{
+		gredis.DefaultConn: {
 			Host:     "127.0.0.1",
 			Password: "",
 			Port:     6379,
@@ -21,33 +21,32 @@ func TestMain(m *testing.M) {
 }
 
 func TestPing(t *testing.T) {
-	pong, err := gredis2.Def().Ping().Result()
+	pong, err := gredis.Def().Ping().Result()
 	assert.Nil(t, err)
 	t.Logf("Pong %s", pong)
-	gredis2.Close()
 }
 
 func TestGetSet(t *testing.T) {
 	// test exists key
-	err := gredis2.Def().Set("test", "test", 0*time.Second).Err()
+	err := gredis.Def().Set("test", "test", 0*time.Second).Err()
 	assert.Nil(t, err)
-	ret, err := gredis2.Def().Get("test").Result()
+	ret, err := gredis.Def().Get("test").Result()
 	assert.Equal(t, "test", ret)
 	assert.Nil(t, err)
 
-	err = gredis2.Def().Del("test").Err()
+	err = gredis.Def().Del("test").Err()
 	assert.Nil(t, err)
 
 	// test not exists key
-	ret2, err := gredis2.Def().Get("test_no_exists").Result()
+	ret2, err := gredis.Def().Get("test_no_exists").Result()
 	assert.Equal(t, "", ret2)
 	assert.NotNil(t, err)
 	assert.IsType(t, redis2.Nil, err)
 }
 
 func TestNewConn(t *testing.T) {
-	gredis2.Configs = map[string]gredis2.Conf{
-		gredis2.DefaultConn: {
+	gredis.Configs = map[string]gredis.Conf{
+		gredis.DefaultConn: {
 			Host:     "127.0.0.1",
 			Password: "",
 			Port:     6379,
@@ -60,8 +59,8 @@ func TestNewConn(t *testing.T) {
 			Database: 0,
 		},
 	}
-	gredis2.Reset()
-	pong, err := gredis2.Conn("new").Ping().Result()
+	gredis.Reset()
+	pong, err := gredis.Conn("new").Ping().Result()
 	assert.Nil(t, err)
 	assert.Equal(t, "PONG", pong)
 }
@@ -72,5 +71,5 @@ func TestNotExistsConn(t *testing.T) {
 			t.Errorf("The code did not panic")
 		}
 	}()
-	gredis2.Conn("not_exists")
+	gredis.Conn("not_exists")
 }
