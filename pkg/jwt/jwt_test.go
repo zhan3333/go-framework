@@ -1,7 +1,7 @@
 package jwt_test
 
 import (
-	jwt2 "github.com/dgrijalva/jwt-go"
+	jwtgo "github.com/golang-jwt/jwt/v4"
 	"github.com/stretchr/testify/assert"
 	"go-framework/pkg/jwt"
 	"reflect"
@@ -11,13 +11,13 @@ import (
 
 func TestJWTCustomize(t *testing.T) {
 	type AuthJWTClaims struct {
-		jwt2.StandardClaims
+		jwtgo.StandardClaims
 		UserID     uint64
 		Authorized bool
 	}
 	j := jwt.NewJWT("123456")
 	claims := AuthJWTClaims{
-		jwt2.StandardClaims{
+		jwtgo.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Minute * 15).Unix(),
 		},
 		uint64(1),
@@ -35,7 +35,7 @@ func TestJWTCustomize(t *testing.T) {
 }
 
 func TestJWTMapClaims(t *testing.T) {
-	claims := jwt2.MapClaims{}
+	claims := jwtgo.MapClaims{}
 	claims["user_id"] = uint64(1)
 	claims["authorized"] = true
 	claims["exp"] = time.Now().Add(time.Minute * 15).Unix()
@@ -44,11 +44,11 @@ func TestJWTMapClaims(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotEmpty(t, tokenStr)
 	t.Logf("token: %s", tokenStr)
-	claims2 := jwt2.MapClaims{}
+	claims2 := jwtgo.MapClaims{}
 	token, err := j.Parse(tokenStr, &claims2)
 	assert.Nil(t, err)
-	if c, ok := token.Claims.(*jwt2.MapClaims); !ok {
-		t.Errorf("token.Claims type must be %s, got %+v", "jwt2.MapClaims", reflect.TypeOf(token.Claims))
+	if c, ok := token.Claims.(*jwtgo.MapClaims); !ok {
+		t.Errorf("token.Claims type must be %s, got %+v", "jwtgo.MapClaims", reflect.TypeOf(token.Claims))
 	} else {
 		assert.Nil(t, c.Valid())
 		assert.Equal(t, claims["user_id"], uint64((*c)["user_id"].(float64)))

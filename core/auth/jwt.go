@@ -1,7 +1,7 @@
 package auth
 
 import (
-	jwtgo "github.com/dgrijalva/jwt-go"
+	jwtgo "github.com/golang-jwt/jwt/v4"
 	"github.com/pkg/errors"
 	"go-framework/app"
 	"go-framework/pkg/jwt"
