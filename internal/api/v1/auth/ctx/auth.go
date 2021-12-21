@@ -1,13 +1,14 @@
 package ctx
 
 import (
+	"net/http"
+
 	auth2 "go-framework/core/auth"
 	"go-framework/core/lgo"
 	"go-framework/internal/domain"
 	"go-framework/internal/model"
 	"go-framework/internal/repo"
 	"go-framework/pkg/auth"
-	"net/http"
 )
 
 func Register(ctx *lgo.Context, req RegisterReq) error {
@@ -48,10 +49,11 @@ func Login(ctx *lgo.Context, req LoginReq) error {
 	if token, err := auth2.NewJWT().Create(uint64(user.ID)); err != nil {
 		return err
 	} else {
-		return ctx.JSON(LoginResp{
+		ctx.JSON(http.StatusOK, LoginResp{
 			AccessToken: token.Token,
 			Type:        token.Type,
 			ExpiresAt:   token.ExpiresAt,
 		})
+		return nil
 	}
 }

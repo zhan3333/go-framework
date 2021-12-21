@@ -3,8 +3,13 @@ package boot
 import (
 	"errors"
 	"fmt"
-	"github.com/jinzhu/configor"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
+	"log"
+	"os"
+	"strconv"
+	"time"
+
 	"go-framework/app"
 	"go-framework/conf"
 	gdb2 "go-framework/core/gdb"
@@ -16,9 +21,6 @@ import (
 	routes "go-framework/internal/route"
 	"go-framework/internal/validator"
 	_ "go-framework/migrate_file"
-	"os"
-	"strconv"
-	"time"
 )
 
 // 框架启动
@@ -61,7 +63,7 @@ func New(opts ...Option) error {
 
 	err := func() error {
 		if config, err := loadConfig(options.configFile); err != nil {
-			return fmt.Errorf("load config failed: %w", err)
+			return fmt.Errorf("load config %s: %w", options.configFile, err)
 		} else {
 			app.Config = config
 		}
@@ -90,7 +92,11 @@ func New(opts ...Option) error {
 	}()
 	if err != nil {
 		datetime := time.Now().Format("2006-01-02 15:04:05")
-		glog2.Default.Errorf("[%s] boot failed: %s", datetime, err)
+		if glog2.Default != nil {
+			glog2.Default.WithError(err).Errorf("[%s] boot failed", datetime)
+		} else {
+			log.Printf("[%s] boot failed: %+v", datetime, err)
+		}
 	}
 	return nil
 }
@@ -102,10 +108,11 @@ func Destroy() {
 
 func loadConfig(configFile string) (*conf.Config, error) {
 	var config = conf.Config{}
-	if err := configor.Load(&config,
-		configFile,
-		"config/default.toml",
-	); err != nil {
+	viper.SetConfigFile(configFile)
+	if err := viper.ReadInConfig(); err != nil {
+		return nil, err
+	}
+	if err := viper.Unmarshal(&config); err != nil {
 		return nil, err
 	}
 	return &config, nil
@@ -184,15 +191,6 @@ func bootDB() error {
 	}
 	if err := gdb2.InitAll(); err != nil {
 		return fmt.Errorf("init gdb module failed: %w", err)
-	}
-
-	for k, v := range app.Config.Redis {
-		gredis2.Configs[k] = gredis2.Conf{
-			Host:     v.Host,
-			Password: v.Password,
-			Port:     v.Port,
-			Database: v.Index,
-		}
 	}
 
 	// load migrate files

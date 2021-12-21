@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+
 	"go-framework/core/lgo"
 	auth2 "go-framework/internal/api/v1/auth"
 )

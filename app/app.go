@@ -1,12 +1,13 @@
 package app
 
 import (
-	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"go-framework/conf"
+	redis2 "github.com/go-redis/redis/v7"
 	"path/filepath"
 	"runtime"
+
+	"go-framework/conf"
 )
 
 // 储存全局变量
@@ -21,6 +22,7 @@ var (
 	Booted bool
 	router *gin.Engine
 	Config *conf.Config
+	redis  *redis2.Client
 )
 
 func init() {
@@ -59,9 +61,13 @@ func GetRouter() *gin.Engine {
 	return router
 }
 
-func Run() error {
-	if router == nil {
-		return errors.New("router no set")
+func SetRedis(r *redis2.Client) {
+	redis = r
+}
+
+func Redis() *redis2.Client {
+	if redis == nil {
+		panic("app.redis not set")
 	}
-	return router.Run(fmt.Sprintf("%s:%d", Config.App.Host, Config.App.Port))
+	return redis
 }

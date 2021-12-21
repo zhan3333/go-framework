@@ -3,14 +3,17 @@ package routes
 import (
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
+	"io"
+	"net/http"
+	"os"
+	"path"
+	"time"
+
 	"go-framework/app"
 	"go-framework/core/lgo"
 	"go-framework/internal/middleware"
 	"go-framework/internal/route/api"
 	"go-framework/internal/route/swag"
-	"io"
-	"os"
-	"path"
 )
 
 var engine *gin.Engine
@@ -55,10 +58,9 @@ func NewRouter(opts ...Option) *gin.Engine {
 	engine = gin.New()
 
 	engine.Use(lgo.WithContext())
-	engine.Use(gin.Recovery(), gin.Logger())
+	engine.Use(gin.Recovery())
 	engine.Use(middleware.Logger())
 
-	pprof.Register(engine)
 	loadRoutes()
 	return engine
 }
@@ -68,4 +70,13 @@ func loadRoutes() {
 	engine.Static("public", path.Join(app.StoragePath, "app/public"))
 	api.LoadApi(engine)
 	swag.LoadSwag(engine)
+	pprof.Register(engine)
+	engine.GET("/", func(ctx *gin.Context) {
+		ctx.String(http.StatusOK, "ok")
+	})
+
+	engine.GET("test", func(ctx *gin.Context) {
+		time.Sleep(6 * time.Second)
+		ctx.String(http.StatusOK, "ok")
+	})
 }

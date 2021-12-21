@@ -10,14 +10,18 @@ import (
 // @Param user body ctx.RegisterReq true "注册信息"
 // @Success 200 {object} resp2.Responser
 // @Router /api/auth/register [post]
-func Register(ctx *lgo.Context) error {
+func Register(ctx *lgo.Context) {
 	var (
 		req authctx.RegisterReq
 	)
 	if err := ctx.Bind(&req); err != nil {
-		return err
+		_ = ctx.Error(err)
+		return
 	}
-	return authctx.Register(ctx, req)
+	if err := authctx.Register(ctx, req); err != nil {
+		_ = ctx.Error(err)
+		return
+	}
 }
 
 // Login @Summary 登录
@@ -25,12 +29,15 @@ func Register(ctx *lgo.Context) error {
 // @Param user body ctx.LoginReq true "登录"
 // @Success 200 {object} resp.LoginResp
 // @Router /api/auth/login [post]
-func Login(ctx *lgo.Context) error {
+func Login(ctx *lgo.Context) {
 	var (
 		req authctx.LoginReq
 	)
 	if err := ctx.Bind(&req); err != nil {
-		return err
+		_ = ctx.Error(err)
 	}
-	return authctx.Login(ctx, req)
+	if err := authctx.Login(ctx, req); err != nil {
+		_ = ctx.Error(err)
+		return
+	}
 }

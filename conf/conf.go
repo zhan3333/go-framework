@@ -6,11 +6,20 @@ import (
 
 type Config struct {
 	App       App
+	HTTP      HTTP
 	JWT       JWT
-	Databases map[string]DB    `toml:"db"`
-	Redis     map[string]Redis `toml:"redis"`
-	Log       map[string]Log   `toml:"log"`
+	Databases map[string]DB    `mapstructure:"db"`
+	Redis     map[string]Redis `mapstructure:"redis"`
+	Log       map[string]Log   `mapstructure:"log"`
 	Cron      Cron
+}
+
+type HTTP struct {
+	Port         int
+	Host         string
+	Timeout      time.Duration
+	WriteTimeout time.Duration
+	ReadTimeout  time.Duration
 }
 
 type Cron struct {
@@ -19,8 +28,6 @@ type Cron struct {
 
 type App struct {
 	Name  string
-	Port  int
-	Host  string
 	URL   string `json:"url"`
 	Env   string
 	Debug bool

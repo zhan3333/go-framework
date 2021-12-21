@@ -15,7 +15,7 @@ Email: grianchan@gmail.com
 - 支持命令行模式 + HTTP 模式
 - 协程下的定时任务功能
 - 使用 `GORM` v2
-- toml 配置文件加载
+- viper toml 配置文件加载
 - 待完善的储存系统
 
 ## 如何运行
@@ -70,16 +70,10 @@ go run main.go
 - [x] Redis 多连接配置
 - [x] MySQL 多连接配置
 - [x] console 模块优化 (使用 cobra)
-- [] storage 模块优化
-    - [] 目录映射
-    - [] 使用文档
-    - [] 动态资源访问 URL
-    - [] 带 token 的资源访问
-    - [] 带 失效时间的 资源访问
 - [] 中间件
     - [x] JWT 中间件加入
     - [x] cors 跨域中间件 (github.com/gin-contrib/cors)
-    - [] 请求速率 throttle 中间件
+    - [] 请求速率 rate limiter 中间件
 - [x] pprof 性能监控 (使用 `go tool pprof http://localhost:8090/debug/pprof/heap` 访问)
 - [x] 配置模块改用 github.com/BurntSushi/toml
 - [] 使用 context 传递上下文

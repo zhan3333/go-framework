@@ -1,55 +1,50 @@
 package lgo
 
 import (
-	"context"
 	"github.com/gin-gonic/gin"
-	"go-framework/internal/model"
 	"net/http"
+
+	"go-framework/internal/model"
 )
 
 type Context struct {
-	context.Context
-	Gin  *gin.Context
+	*gin.Context
 	User *model.User
 }
 
 func WithContext() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Request = c.Request.WithContext(&Context{
-			c.Request.Context(),
-			c,
-			nil,
+		c.Set("ctx", &Context{
+			Context: c,
 		})
 		c.Next()
 	}
 }
 
-type HandlerFunc func(ctx *Context) error
+// HandlerFunc 控制器需要实现的方法
+type HandlerFunc func(ctx *Context)
 
 func Route(r HandlerFunc) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx := c.Request.Context().(*Context)
-		if err := r(ctx); err != nil {
-			ctx.WriteErr(err)
+		ctx := c.MustGet("ctx").(*Context)
+		r(ctx)
+		if len(ctx.Errors) != 0 {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, ctx.Errors.JSON())
+			return
 		}
 		return
 	}
-}
-
-func (c *Context) JSON(body interface{}) error {
-	c.Gin.JSON(http.StatusOK, body)
-	return nil
 }
 
 func (c *Context) WriteErr(err error) {
 	switch err.(type) {
 	case *HTTPError:
 		he := err.(*HTTPError)
-		c.Gin.JSON(he.Code, map[string]interface{}{
+		c.JSON(he.Code, map[string]interface{}{
 			"message": he.Message,
 		})
 	default:
-		c.Gin.JSON(http.StatusInternalServerError, map[string]interface{}{
+		c.JSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": err.Error(),
 		})
 	}
@@ -77,7 +72,7 @@ func (c *Context) NoAuth(message ...interface{}) error {
 }
 
 func (c *Context) Bind(obj interface{}) error {
-	if err := c.Gin.ShouldBind(obj); err != nil {
+	if err := c.ShouldBind(obj); err != nil {
 		return NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 	return nil
