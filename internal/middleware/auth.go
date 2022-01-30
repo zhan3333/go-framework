@@ -1,60 +1,48 @@
 package middleware
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"go-framework/core/auth"
-	"go-framework/core/lgo"
-	"go-framework/internal/model"
-	"go-framework/internal/repo"
+
+	"go-framework/pkg/lgo"
+
 	"strings"
 )
 
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var token string
-		var user *model.User
 		var err error
+		var token string
 
-		ctx := c.Request.Context().(*lgo.Context)
-		if token = GetToken(c); token == "" {
-			ctx.WriteErr(ctx.NoAuth("未提供登录凭据"))
+		cc := c.MustGet(lgo.CustomContextKey).(*lgo.CustomContext)
+		if token = getToken(cc); token == "" {
+			_ = cc.Unauthorized("未提供登录凭据")
 			c.Abort()
 			return
 		}
-		user, err = ParseUser(token)
+		userID, err := parseToken(cc, token)
 		if err != nil {
-			ctx.WriteErr(err)
+			_ = cc.Unauthorized("无效的登陆凭据")
 			c.Abort()
 			return
 		}
-		ctx.User = user
+		cc.UserID = userID
 		c.Next()
 	}
 }
 
-func GetToken(c *gin.Context) string {
-	token := c.GetHeader("Authorization")
+func getToken(cc *lgo.CustomContext) string {
+	token := cc.GetHeader("Authorization")
 	if strings.Contains(token, "bearer ") {
 		token = strings.ReplaceAll(token, "bearer ", "")
 	}
 	return token
 }
 
-func ParseUser(token string) (*model.User, error) {
-	var user *model.User
+func parseToken(cc *lgo.CustomContext, token string) (uint64, error) {
 	var err error
-	claims, err := auth.NewJWT().Parse(token)
+	claims, err := cc.JWT.Parse(token)
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
-	userID := claims.UserID
-	if user, err = repo.NewUser().First(userID); err != nil {
-		return nil, err
-	}
-	fmt.Println(user, err, userID)
-	if user == nil {
-		return nil, auth.ErrUserNoExists
-	}
-	return user, nil
+	return claims.UserID, nil
 }

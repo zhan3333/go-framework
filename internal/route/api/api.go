@@ -3,8 +3,9 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 
-	"go-framework/core/lgo"
-	auth2 "go-framework/internal/api/v1/auth"
+	"go-framework/internal/api/v1/auth"
+	"go-framework/internal/middleware"
+	"go-framework/pkg/lgo"
 )
 
 func LoadApi(router *gin.Engine) {
@@ -12,11 +13,13 @@ func LoadApi(router *gin.Engine) {
 	{
 		v1 := api.Group("/v1")
 		{
-			gAuth := v1.Group("/auth")
+			authGroup := v1.Group("/auth")
 			{
-				gAuth.POST("register", lgo.Route(auth2.Register))
-				gAuth.POST("login", lgo.Route(auth2.Login))
+				authGroup.POST("register", lgo.Controller(auth.Register))
+				authGroup.POST("login", lgo.Controller(auth.Login))
 			}
+
+			v1.GET("/me", middleware.Auth(), lgo.Controller(auth.Me))
 		}
 	}
 }

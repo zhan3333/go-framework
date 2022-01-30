@@ -6,14 +6,11 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path"
-	"time"
 
-	"go-framework/app"
-	"go-framework/core/lgo"
 	"go-framework/internal/middleware"
 	"go-framework/internal/route/api"
 	"go-framework/internal/route/swag"
+	"go-framework/pkg/lgo"
 )
 
 var engine *gin.Engine
@@ -37,7 +34,7 @@ func WithErrWriter(w io.Writer) Option {
 	}
 }
 
-func NewRouter(opts ...Option) *gin.Engine {
+func NewRouter(dependencies *lgo.Dependencies, opts ...Option) *gin.Engine {
 	options := Options{
 		writer:    os.Stdout,
 		errWriter: os.Stderr,
@@ -57,7 +54,7 @@ func NewRouter(opts ...Option) *gin.Engine {
 
 	engine = gin.New()
 
-	engine.Use(lgo.WithContext())
+	engine.Use(lgo.WithContext(dependencies))
 	engine.Use(gin.Recovery())
 	engine.Use(middleware.Logger())
 
@@ -67,16 +64,10 @@ func NewRouter(opts ...Option) *gin.Engine {
 
 // 新增加的路由文件需要在这里进行加载
 func loadRoutes() {
-	engine.Static("public", path.Join(app.StoragePath, "app/public"))
 	api.LoadApi(engine)
 	swag.LoadSwag(engine)
 	pprof.Register(engine)
 	engine.GET("/", func(ctx *gin.Context) {
-		ctx.String(http.StatusOK, "ok")
-	})
-
-	engine.GET("test", func(ctx *gin.Context) {
-		time.Sleep(6 * time.Second)
 		ctx.String(http.StatusOK, "ok")
 	})
 }

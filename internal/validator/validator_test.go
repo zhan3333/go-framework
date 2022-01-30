@@ -2,15 +2,16 @@ package validator_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"go-framework/core/boot"
-	"go-framework/internal/validator"
 	v "gopkg.in/go-playground/validator.v9"
 	"os"
 	"testing"
+
+	"go-framework/core/boot"
+	"go-framework/internal/validator"
 )
 
 func TestMain(m *testing.M) {
-	if err := boot.New(
+	if _, err := boot.Boot(
 		boot.WithConfigFile(os.Getenv("LGO_TEST_FILE")),
 		boot.WithRoutePrint(false),
 	); err != nil {

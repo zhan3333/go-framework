@@ -1,36 +1,33 @@
 package boot
 
 import (
-	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"log"
 	"os"
-	"strconv"
-	"time"
 
-	"go-framework/app"
-	"go-framework/conf"
-	gdb2 "go-framework/core/gdb"
-	glog2 "go-framework/core/glog"
-	gredis2 "go-framework/core/gredis"
-	migrate2 "go-framework/core/migrate"
-	storage2 "go-framework/core/storage"
-	"go-framework/internal/cron"
+	"go-framework/core/auth"
+	"go-framework/internal/config"
 	routes "go-framework/internal/route"
 	"go-framework/internal/validator"
-	_ "go-framework/migrate_file"
+	"go-framework/pkg/db"
+	"go-framework/pkg/lgo"
+	"go-framework/pkg/logger"
+	"go-framework/pkg/redis"
 )
 
-// 框架启动
-
-func SetInTest() {
-	app.InTest = true
+type Booted struct {
+	*lgo.Dependencies
+	Booted bool
 }
 
-func SetInCommand() {
-	app.InConsole = true
+func (b *Booted) Destroy() {
+	if b == nil {
+		return
+	}
+	if b.Redis != nil {
+		_ = b.Redis.Close()
+	}
 }
 
 type Options struct {
@@ -52,8 +49,13 @@ func WithRoutePrint(enable bool) Option {
 	}
 }
 
-// New 应用启动入口
-func New(opts ...Option) error {
+// Boot 应用启动入口
+func Boot(opts ...Option) (*Booted, error) {
+	var booted = &Booted{
+		Dependencies: &lgo.Dependencies{},
+	}
+	var err error
+
 	options := Options{
 		enableRoutePrint: true,
 	}
@@ -61,171 +63,77 @@ func New(opts ...Option) error {
 		opt(&options)
 	}
 
-	err := func() error {
-		if config, err := loadConfig(options.configFile); err != nil {
-			return fmt.Errorf("load config %s: %w", options.configFile, err)
-		} else {
-			app.Config = config
-		}
-		if err := bootLog(); err != nil {
-			return err
-		}
-
-		logBootInfo("boot start")
-
-		if err := bootDB(); err != nil {
-			return err
-		}
-
-		logBootInfo("database module init")
-
-		bootStorage()
-		bootHTTP()
-
-		if app.Config.Cron.Enable {
-			bootSchedule()
-		}
-
-		app.Booted = true
-		logBootInfo("boot success")
-		return nil
-	}()
-	if err != nil {
-		datetime := time.Now().Format("2006-01-02 15:04:05")
-		if glog2.Default != nil {
-			glog2.Default.WithError(err).Errorf("[%s] boot failed", datetime)
-		} else {
-			log.Printf("[%s] boot failed: %+v", datetime, err)
-		}
+	if booted.Config, err = loadConfig(options.configFile); err != nil {
+		return nil, fmt.Errorf("boot config: %w", err)
 	}
-	return nil
+
+	level, err := logrus.ParseLevel(booted.Config.Log.Level)
+	if err != nil {
+		return nil, fmt.Errorf("boot log: level parse: %w", err)
+	}
+
+	var format logrus.Formatter = new(logrus.JSONFormatter)
+	if booted.Config.Log.Format == "text" {
+		format = new(logrus.TextFormatter)
+	}
+
+	booted.Logger = logger.New(&logger.Options{
+		Out:    os.Stderr,
+		Format: format,
+		Level:  level,
+	})
+
+	booted.JWT = auth.NewJWT(&auth.Options{
+		Secret: booted.Config.JWT.Secret,
+		TTL:    booted.Config.JWT.TTL,
+		Issuer: booted.Config.JWT.Issuer,
+	})
+
+	booted.DB, err = db.New(&db.Options{
+		Host:     booted.Config.DB.Host,
+		Port:     booted.Config.DB.Port,
+		Username: booted.Config.DB.Username,
+		Password: booted.Config.DB.Password,
+		Database: booted.Config.DB.Database,
+		Timeout:  booted.Config.DB.Timeout,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("boot db: %w", err)
+	}
+
+	booted.Redis, err = redis.New(&redis.Options{
+		Host:     booted.Config.Redis.Host,
+		Password: booted.Config.Redis.Password,
+		Port:     booted.Config.Redis.Port,
+		Database: booted.Config.Redis.Database,
+	})
+
+	if err != nil {
+		return nil, fmt.Errorf("boot redis: %w", err)
+	}
+
+	booted.Server = routes.NewRouter(booted.Dependencies,
+		routes.WithWriter(booted.Logger.Writer()),
+		routes.WithErrWriter(booted.Logger.Writer()),
+	)
+
+	validator.Init()
+
+	return booted, nil
 }
 
-func Destroy() {
-	gdb2.Close()
-	gredis2.Close()
-}
+func loadConfig(configFile string) (*config.Config, error) {
+	var conf = &config.Config{}
 
-func loadConfig(configFile string) (*conf.Config, error) {
-	var config = conf.Config{}
+	viper.SetDefault("log.level", logrus.InfoLevel)
+	viper.SetDefault("log.format", "json")
+
 	viper.SetConfigFile(configFile)
 	if err := viper.ReadInConfig(); err != nil {
 		return nil, err
 	}
-	if err := viper.Unmarshal(&config); err != nil {
+	if err := viper.Unmarshal(conf); err != nil {
 		return nil, err
 	}
-	return &config, nil
-}
-
-func logBootInfo(info string) {
-	datetime := time.Now().Format("2006-01-02 15:04:05")
-	glog2.Default.Infof("[%s] boot: %s", datetime, info)
-}
-
-func bootLog() error {
-	var ok bool
-	var sysLog conf.Log
-	var defLog conf.Log
-	var err error
-	if sysLog, ok = app.Config.Log["sys"]; !ok {
-		sysLog = conf.DefaultLog
-	}
-	if defLog, ok = app.Config.Log["def"]; !ok {
-		defLog = conf.DefaultLog
-	}
-
-	if glog2.Sys, err = newLog(sysLog); err != nil {
-		return fmt.Errorf("create sys log failed: %w", err)
-	}
-
-	if glog2.Default, err = newLog(defLog); err != nil {
-		return fmt.Errorf("create default log failed: %w", err)
-	}
-
-	logBootInfo("log module init")
-	return nil
-}
-
-func newLog(log conf.Log) (*logrus.Logger, error) {
-	logger := logrus.New()
-	sysLevel, err := logrus.ParseLevel(log.Level)
-	if err != nil {
-		return nil, err
-	}
-
-	logger.SetLevel(sysLevel)
-	if log.Format == "json" {
-		logger.SetFormatter(&logrus.TextFormatter{})
-	} else {
-		logger.SetFormatter(&logrus.JSONFormatter{})
-	}
-
-	switch log.Write {
-	case "stderr":
-		logger.SetOutput(os.Stderr)
-	case "file":
-		if log.FilePath == "" {
-			return nil, errors.New("sys log file path no set")
-		}
-		f, err := os.Create(log.FilePath)
-		if err != nil {
-			return nil, fmt.Errorf("open log file %s failed: %w", log.FilePath, err)
-		}
-		logger.SetOutput(f)
-	default:
-		return nil, fmt.Errorf("no supported write: %s", log.Write)
-	}
-	return logger, nil
-}
-
-func bootDB() error {
-	for k, v := range app.Config.Databases {
-		gdb2.ConnConfigs[k] = gdb2.MySQLConf{
-			Host:     v.Host,
-			Port:     strconv.Itoa(v.Port),
-			Username: v.Username,
-			Password: v.Password,
-			Database: v.Database,
-		}
-	}
-	if err := gdb2.InitAll(); err != nil {
-		return fmt.Errorf("init gdb module failed: %w", err)
-	}
-
-	// load migrate files
-	migrate2.DB = gdb2.Def()
-	if err := migrate2.InitMigrationTable(); err != nil {
-		return fmt.Errorf("migrate.InitMigrationTable() failed %w", err)
-	}
-	return nil
-}
-
-func bootStorage() {
-	storage2.Init(app.StoragePath)
-	logBootInfo("storage module init")
-}
-
-func bootHTTP() {
-	logBootInfo("middleware module init")
-	if !app.RunningInConsole() {
-		// 注册路由
-		app.SetRouter(routes.NewRouter(
-			routes.WithWriter(glog2.Sys.Writer()),
-			routes.WithErrWriter(glog2.Sys.Writer())),
-		)
-
-		logBootInfo("route module init")
-
-		validator.Init()
-		logBootInfo("validator module init")
-	}
-}
-
-func bootSchedule() {
-	if !app.RunningInConsole() {
-		cron.Register()
-		cron.Start()
-		logBootInfo("schedule module start")
-	}
+	return conf, nil
 }

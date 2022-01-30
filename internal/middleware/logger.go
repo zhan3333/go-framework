@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
-	glog2 "go-framework/core/glog"
 	"io/ioutil"
 	"time"
+
+	"go-framework/pkg/lgo"
 )
 
 type bodyLogWriter struct {
@@ -27,6 +28,7 @@ func (w bodyLogWriter) WriteString(s string) (int, error) {
 // Logger 记录请求与响应的数据
 func Logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		cc := c.MustGet(lgo.CustomContextKey).(*lgo.CustomContext)
 		bodyLogWriter := &bodyLogWriter{body: bytes.NewBufferString(""), ResponseWriter: c.Writer}
 		c.Writer = bodyLogWriter
 
@@ -51,7 +53,7 @@ func Logger() gin.HandlerFunc {
 		//结束时间
 		endTime := time.Now()
 
-		glog2.Sys.WithFields(log.Fields{
+		cc.Logger.WithFields(log.Fields{
 			"request_uri":    c.Request.RequestURI,
 			"request_method": c.Request.Method,
 			"client_ip":      c.ClientIP(),

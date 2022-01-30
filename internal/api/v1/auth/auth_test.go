@@ -3,113 +3,138 @@ package auth_test
 import (
 	"encoding/json"
 	"github.com/bxcodec/faker/v3"
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"go-framework/app"
+
 	"go-framework/core/boot"
-	"go-framework/core/gdb"
-	"go-framework/core/lgo"
-	"go-framework/internal/api/v1/auth/ctx"
-	"go-framework/internal/domain"
+	"go-framework/internal/api/v1/auth"
+	"go-framework/internal/domain/user"
 	"go-framework/internal/model"
-	"go-framework/internal/repo"
+	"go-framework/pkg/lgo"
+	"go-framework/pkg/test"
+
 	"net/http"
-	"net/http/httptest"
 	"os"
 	"testing"
 )
 
-var test *lgo.Test
+var booted *boot.Booted
+var server *gin.Engine
 
 func TestMain(m *testing.M) {
-	if err := boot.New(
+	var err error
+	if booted, err = boot.Boot(
 		boot.WithConfigFile(os.Getenv("LGO_TEST_FILE")),
-		boot.WithRoutePrint(false),
 	); err != nil {
 		panic(err)
 	}
-	test = lgo.New(app.GetRouter())
+	server = booted.Server
 	m.Run()
 }
 
 // 测试正常注册
 func TestRegister(t *testing.T) {
-	request := ctx.RegisterReq{}
+	request := auth.RegisterReq{}
 	assert.Nil(t, faker.FakeData(&request))
 
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/register", lgo.ToReader(request))
+	req, rec := test.NewHTTPTest(http.MethodPost, "/api/v1/auth/register", lgo.ToReader(request))
 	req.Header.Set("content-type", "application/json")
-	resp := test.Send(req)
+	server.ServeHTTP(rec, req)
+	test.PrintRec(t, rec)
 
-	assert.Equal(t, http.StatusOK, resp.Code)
-
-	t.Log(resp.Body.String())
+	assert.Equal(t, http.StatusOK, rec.Code)
 }
 
 // 测试参数校验不通过
 func TestStoreParamsErr(t *testing.T) {
-	request := ctx.RegisterReq{}
+	request := auth.RegisterReq{}
 
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/register", lgo.ToReader(request))
+	req, rec := test.NewHTTPTest(http.MethodPost, "/api/v1/auth/register", lgo.ToReader(request))
 	req.Header.Set("content-type", "application/json")
-	resp := test.Send(req)
+	server.ServeHTTP(rec, req)
+	test.PrintRec(t, rec)
 
-	assert.Equal(t, http.StatusBadRequest, resp.Code)
-	t.Log(resp.Body.String())
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
 }
 
 // 测试邮箱已被使用
 func TestRegisterEmailUsed(t *testing.T) {
-	user := model.User{}
-	assert.Nil(t, gdb.Def().First(&user).Error)
+	u := model.User{}
+	assert.Nil(t, booted.DB.First(&u).Error)
 
-	request := ctx.RegisterReq{
-		Email:    user.Email,
+	request := auth.RegisterReq{
+		Email:    u.Email,
 		Name:     faker.Name(),
 		Password: faker.Password(),
 	}
 
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/register", lgo.ToReader(request))
+	req, rec := test.NewHTTPTest(http.MethodPost, "/api/v1/auth/register", lgo.ToReader(request))
 	req.Header.Set("content-type", "application/json")
-	resp := test.Send(req)
-
-	assert.Equal(t, http.StatusBadRequest, resp.Code)
-	t.Log(resp.Body.String())
+	server.ServeHTTP(rec, req)
+	test.PrintRec(t, rec)
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
 
 	body := struct {
 		Message string
 	}{}
-	assert.NoError(t, json.Unmarshal(resp.Body.Bytes(), &body))
+	assert.NoError(t, json.Unmarshal(rec.Body.Bytes(), &body))
 	assert.Equal(t, "邮箱已被使用", body.Message)
+}
+
+func NewUser() *user.User {
+	return user.NewUser(booted.DB)
 }
 
 func TestLogin(t *testing.T) {
 	pwd := faker.Password()
-	user, err := domain.NewUser().Store(repo.StoreUserParams{
+	u, err := NewUser().Store(user.StoreUserParams{
 		Name:     faker.Username(),
 		Email:    faker.Email(),
 		Password: pwd,
 	})
 	assert.Nil(t, err)
 
-	request := ctx.LoginReq{
-		Email:    user.Email,
+	request := auth.LoginReq{
+		Email:    u.Email,
 		Password: pwd,
 	}
 
-	req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/login", lgo.ToReader(request))
+	req, rec := test.NewHTTPTest(http.MethodPost, "/api/v1/auth/login", lgo.ToReader(request))
 	req.Header.Set("content-type", "application/json")
-	resp := test.Send(req)
+	server.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusOK, resp.Code)
-	t.Log(resp.Body.String())
+	test.PrintRec(t, rec)
+	assert.Equal(t, http.StatusOK, rec.Code)
 
 	body := struct {
 		AccessToken string `json:"access_token"`
 		Type        string `json:"type"`
 		ExpiresAt   int64  `json:"expires_at"`
 	}{}
-	assert.NoError(t, json.Unmarshal(resp.Body.Bytes(), &body))
+	assert.NoError(t, json.Unmarshal(rec.Body.Bytes(), &body))
 	assert.NotEmpty(t, body.AccessToken)
 	assert.NotEmpty(t, body.Type)
 	assert.NotEmpty(t, body.ExpiresAt)
+}
+
+func TestMe(t *testing.T) {
+	var u1 model.User
+	err := booted.DB.Find(&u1).Error
+	if assert.NoError(t, err) {
+		token, err := booted.JWT.Create(uint64(u1.ID))
+		if assert.NoError(t, err) {
+			req, rec := test.NewHTTPTest(http.MethodGet, "/api/v1/me", nil)
+			req.Header.Set("Authorization", token.Type+" "+token.Token)
+			server.ServeHTTP(rec, req)
+			test.PrintRec(t, rec)
+			if assert.Equal(t, http.StatusOK, rec.Code) {
+				u2 := model.User{}
+				if assert.NoError(t, json.Unmarshal(rec.Body.Bytes(), &u2)) {
+					assert.Equal(t, u1.ID, u2.ID)
+					assert.Equal(t, u1.Name, u2.Name)
+					assert.Equal(t, u1.Email, u2.Email)
+				}
+			}
+		}
+	}
 }

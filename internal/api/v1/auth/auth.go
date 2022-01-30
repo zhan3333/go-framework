@@ -1,43 +1,90 @@
 package auth
 
 import (
-	"go-framework/core/lgo"
-	authctx "go-framework/internal/api/v1/auth/ctx"
+	"github.com/gin-gonic/gin"
+	"net/http"
+
+	"go-framework/internal/domain/user"
+	"go-framework/pkg/auth"
+	"go-framework/pkg/lgo"
 )
 
 // Register @Summary 注册新用户
 // @Produce  json
-// @Param user body ctx.RegisterReq true "注册信息"
-// @Success 200 {object} resp2.Responser
+// @Param user body RegisterReq true "注册信息"
+// @Success 200 {string} default
 // @Router /api/auth/register [post]
-func Register(ctx *lgo.Context) {
+func Register(c *lgo.CustomContext) error {
 	var (
-		req authctx.RegisterReq
+		req RegisterReq
+		err error
 	)
-	if err := ctx.Bind(&req); err != nil {
-		_ = ctx.Error(err)
-		return
+	if err := c.Bind(&req); err != nil {
+		return c.BadRequest(err.Error())
 	}
-	if err := authctx.Register(ctx, req); err != nil {
-		_ = ctx.Error(err)
-		return
+	if isUsed, err := c.NewUser().IsEmailUsed(req.Email); err != nil {
+		return err
+	} else if isUsed {
+		return lgo.NewHTTPError(http.StatusBadRequest, "邮箱已被使用")
 	}
+	// 调用领域
+	params := user.StoreUserParams{
+		Name:     req.Name,
+		Email:    req.Email,
+		Password: req.Password,
+	}
+	if _, err = c.NewUser().Store(params); err != nil {
+		// 处理错误
+		return err
+	}
+	return c.OK()
 }
 
 // Login @Summary 登录
 // @Produce  json
-// @Param user body ctx.LoginReq true "登录"
-// @Success 200 {object} resp.LoginResp
+// @Param user body LoginReq true "登录"
+// @Success 200 {object} LoginResp
 // @Router /api/auth/login [post]
-func Login(ctx *lgo.Context) {
+func Login(c *lgo.CustomContext) error {
 	var (
-		req authctx.LoginReq
+		req LoginReq
 	)
-	if err := ctx.Bind(&req); err != nil {
-		_ = ctx.Error(err)
+	if err := c.Bind(&req); err != nil {
+		return c.BadRequest(err.Error())
 	}
-	if err := authctx.Login(ctx, req); err != nil {
-		_ = ctx.Error(err)
-		return
+
+	u, err := c.NewUser().FirstUserByEmail(req.Email)
+	if err != nil {
+		return err
 	}
+	if u == nil {
+		return c.BadRequest("用户不存在")
+	}
+	if err = auth.Compare(u.Password, req.Password); err != nil {
+		return c.BadRequest("密码不正确")
+	}
+	if token, err := c.JWT.Create(uint64(u.ID)); err != nil {
+		return err
+	} else {
+		return c.OK(LoginResp{
+			AccessToken: token.Token,
+			Type:        token.Type,
+			ExpiresAt:   token.ExpiresAt,
+		})
+	}
+}
+
+func Me(c *lgo.CustomContext) error {
+	u, err := c.NewUser().First(c.UserID)
+	if err != nil {
+		return err
+	}
+	if u == nil {
+		return c.Unauthorized("用户不存在")
+	}
+	return c.OK(gin.H{
+		"name":  u.Name,
+		"id":    u.ID,
+		"email": u.Email,
+	})
 }

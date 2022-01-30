@@ -3,23 +3,33 @@ package auth
 import (
 	jwtgo "github.com/golang-jwt/jwt/v4"
 	"github.com/pkg/errors"
-	"go-framework/app"
-	"go-framework/pkg/jwt"
 	"time"
+
+	"go-framework/pkg/jwt"
 )
 
 var (
 	ErrTimeoutToken = errors.New("登录凭据过期")
 	ErrTokenFormat  = errors.New("无效的凭据格式")
-	ErrNoToken      = errors.New("未提供登录凭据")
-	ErrUserNoExists = errors.New("用户不存在")
+	//ErrNoToken      = errors.New("未提供登录凭据")
+	//ErrUserNoExists = errors.New("用户不存在")
 )
 
-func NewJWT() JWT {
-	return JWT{
-		Secret:      app.Config.JWT.Secret,
-		ExpDuration: app.Config.JWT.TTL,
-		Issuer:      app.Config.JWT.Issuer,
+type Options struct {
+	Secret string
+	TTL    *time.Duration
+	Issuer string
+}
+
+func NewJWT(options *Options) *JWT {
+	ttl := 1 * time.Hour
+	if options.TTL != nil {
+		ttl = *options.TTL
+	}
+	return &JWT{
+		Secret:      options.Secret,
+		ExpDuration: ttl,
+		Issuer:      options.Issuer,
 	}
 }
 
