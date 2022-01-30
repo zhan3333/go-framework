@@ -11,7 +11,7 @@ import (
 
 	"flag"
 
-	"go-framework/core/boot"
+	"go-framework/pkg/boot"
 )
 
 var defaultConfigFile = "configs/local.toml"

@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/viper"
 	"os"
 
-	"go-framework/core/auth"
+	"go-framework/internal/auth"
 	"go-framework/internal/config"
 	routes "go-framework/internal/route"
 	"go-framework/internal/validator"

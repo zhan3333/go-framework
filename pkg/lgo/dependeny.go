@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 
-	"go-framework/core/auth"
+	"go-framework/internal/auth"
 	"go-framework/internal/config"
 )
 

@@ -6,10 +6,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
-	"go-framework/core/boot"
 	"go-framework/internal/api/v1/auth"
 	"go-framework/internal/domain/user"
 	"go-framework/internal/model"
+	"go-framework/pkg/boot"
 	"go-framework/pkg/lgo"
 	"go-framework/pkg/test"
 

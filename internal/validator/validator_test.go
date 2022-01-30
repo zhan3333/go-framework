@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"go-framework/core/boot"
 	"go-framework/internal/validator"
+	"go-framework/pkg/boot"
 )
 
 func TestMain(m *testing.M) {
