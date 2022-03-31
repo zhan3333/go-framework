@@ -40,15 +40,14 @@ go run cmd/lgo/main.go
 
 ## Roadmap
 
-- [x] 连接`MySQL`数据库
+- [x] 数据库
 - [x] http 接口测试
 - [x] 加载配置
 - [x] 日志
 - [x] 缓存
 - [x] 数据库
-- [] 命令行
 - [x] 路由结构
-- [x] ORM
+- [x] GORM
 - [x] Swagger
 - [x] 中间件
 - [x] 注册自定义表单验证规则
@@ -61,6 +60,11 @@ go run cmd/lgo/main.go
 - [x] pprof 性能监控 (使用 `go tool pprof http://localhost:8090/debug/pprof/heap` 访问)
 - [x] 配置模块改用 github.com/BurntSushi/toml
 - [x] 使用 context 传递上下文
+- [] grpc 服务端
+- [] grpc 客户端
+- [] kafka 消息队列
+- [] 升级到 go1.18
+- [] 使用 cobra 创建命令行工具
 
 ## 相关文档
 
