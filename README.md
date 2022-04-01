@@ -63,8 +63,8 @@ go run cmd/lgo/main.go
 - [] grpc 服务端
 - [] grpc 客户端
 - [] kafka 消息队列
-- [] 升级到 go1.18
-- [] 使用 cobra 创建命令行工具
+- [x] 升级到 go1.18
+- [x] 使用 cobra 创建命令行工具
 
 ## 相关文档
 
