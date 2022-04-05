@@ -29,13 +29,13 @@ cp configs/default.tmol configs/local.toml
 ### 运行
 
 ```shell script
-go run cmd/lgo/main.go
+go run main.go server --config=configs/local.toml
 ```
 
 ### 编译
 
-- `go build -o lgo cmd/lgo/main.go`
-- `./lgo --conf=configs/local.toml` // 固定读取 config 目录下的配置文件
+- `go build -o lgo main.go`
+- `./lgo server --config=configs/local.toml` // 固定读取 config 目录下的配置文件
 
 ### 测试
 

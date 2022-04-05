@@ -68,6 +68,6 @@ func loadRoutes() {
 	swag.LoadSwag(engine)
 	pprof.Register(engine)
 	engine.GET("/", func(ctx *gin.Context) {
-		ctx.String(http.StatusOK, "ok")
+		ctx.String(http.StatusOK, "lgo is running")
 	})
 }
