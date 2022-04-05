@@ -9,7 +9,12 @@ Email: grianchan@gmail.com
 ## Feature
 
 - 使用 `GORM` v2
-- viper toml 配置文件加载
+- viper toml 配置文件加载与映射
+- 命令辅助开发调试
+- gin 与中间件
+- 完整的项目实例
+- 自定义控制器 context
+- 单元测试支持加载框架，提供辅助 api 测试方法
 
 ## 如何运行
 
