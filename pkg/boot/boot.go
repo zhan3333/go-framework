@@ -2,6 +2,7 @@ package boot
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os"
@@ -49,10 +50,19 @@ func WithRoutePrint(enable bool) Option {
 	}
 }
 
+// 默认用 json 格式输出日志
+func getDefaultLogger() *logrus.Logger {
+	log := logrus.New()
+	log.SetFormatter(&logrus.JSONFormatter{})
+	return log
+}
+
 // Boot 应用启动入口
 func Boot(opts ...Option) (*Booted, error) {
 	var booted = &Booted{
-		Dependencies: &lgo.Dependencies{},
+		Dependencies: &lgo.Dependencies{
+			Logger: getDefaultLogger(),
+		},
 	}
 	var err error
 
@@ -66,6 +76,8 @@ func Boot(opts ...Option) (*Booted, error) {
 	if booted.Config, err = loadConfig(options.configFile); err != nil {
 		return nil, fmt.Errorf("boot config: %w", err)
 	}
+
+	booted.Logger.Infof("boot by env: %s", booted.Config.App.Env)
 
 	level, err := logrus.ParseLevel(booted.Config.Log.Level)
 	if err != nil {
@@ -115,16 +127,31 @@ func Boot(opts ...Option) (*Booted, error) {
 	booted.Server = routes.NewRouter(booted.Dependencies,
 		routes.WithWriter(booted.Logger.Writer()),
 		routes.WithErrWriter(booted.Logger.Writer()),
+		routes.WithGinMode(getGinMode(booted.Config.App.Env)),
 	)
 
 	validator.Init()
-
+	booted.Booted = true
 	return booted, nil
+}
+
+func getGinMode(env string) string {
+	switch env {
+	case config.EnvTest:
+		return gin.TestMode
+	case config.EnvLocal:
+		return gin.DebugMode
+	case config.EnvProd:
+		return gin.ReleaseMode
+	default:
+		return gin.ReleaseMode
+	}
 }
 
 func loadConfig(configFile string) (*config.Config, error) {
 	var conf = &config.Config{}
 
+	viper.SetDefault("app.env", config.EnvProd)
 	viper.SetDefault("log.level", logrus.InfoLevel)
 	viper.SetDefault("log.format", "json")
 

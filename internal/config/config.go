@@ -6,6 +6,16 @@ import (
 	"go-framework/pkg/redis"
 )
 
+const (
+	// EnvLocal 本地开发环境，意味着更多的信息输出
+	// 例如 gin.Mode 会被设置为 debug
+	EnvLocal = "local"
+	// EnvProd 开发环境
+	EnvProd = "production"
+	// EnvTest 测试环境
+	EnvTest = "test"
+)
+
 type Config struct {
 	App   App           `mapstructure:"app"`
 	HTTP  HTTP          `mapstructure:"http"`
@@ -24,7 +34,7 @@ type HTTP struct {
 type App struct {
 	Name  string
 	URL   string `json:"url"`
-	Env   string
+	Env   string // local、test、production
 	Debug bool
 }
 

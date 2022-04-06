@@ -18,6 +18,7 @@ var engine *gin.Engine
 type Options struct {
 	writer    io.Writer
 	errWriter io.Writer
+	ginMode   string
 }
 
 type Option func(opts *Options)
@@ -31,6 +32,12 @@ func WithWriter(w io.Writer) Option {
 func WithErrWriter(w io.Writer) Option {
 	return func(opts *Options) {
 		opts.errWriter = w
+	}
+}
+
+func WithGinMode(mode string) Option {
+	return func(opts *Options) {
+		opts.ginMode = mode
 	}
 }
 
@@ -50,6 +57,10 @@ func NewRouter(dependencies *lgo.Dependencies, opts ...Option) *gin.Engine {
 
 	if options.errWriter != nil {
 		gin.DefaultErrorWriter = options.errWriter
+	}
+
+	if options.ginMode != "" {
+		gin.SetMode(options.ginMode)
 	}
 
 	engine = gin.New()

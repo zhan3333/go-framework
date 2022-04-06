@@ -3,5 +3,5 @@
 vendor/
 go-framework
 !configs/default.toml
-configs/local.toml
+configs/*
 lgo

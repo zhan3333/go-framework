@@ -8,6 +8,11 @@ import (
 	"strings"
 )
 
+const (
+	NoToken      = "未提供登录凭据"
+	InvalidToken = "无效的登陆凭据"
+)
+
 func Auth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var err error
@@ -15,13 +20,13 @@ func Auth() gin.HandlerFunc {
 
 		cc := c.MustGet(lgo.CustomContextKey).(*lgo.CustomContext)
 		if token = getToken(cc); token == "" {
-			_ = cc.Unauthorized("未提供登录凭据")
+			_ = cc.Unauthorized(NoToken)
 			c.Abort()
 			return
 		}
 		userID, err := parseToken(cc, token)
 		if err != nil {
-			_ = cc.Unauthorized("无效的登陆凭据")
+			_ = cc.Unauthorized(InvalidToken + ": " + err.Error())
 			c.Abort()
 			return
 		}
@@ -30,17 +35,17 @@ func Auth() gin.HandlerFunc {
 	}
 }
 
-func getToken(cc *lgo.CustomContext) string {
-	token := cc.GetHeader("Authorization")
+func getToken(c *lgo.CustomContext) string {
+	token := c.GetHeader("Authorization")
 	if strings.Contains(token, "bearer ") {
 		token = strings.ReplaceAll(token, "bearer ", "")
 	}
 	return token
 }
 
-func parseToken(cc *lgo.CustomContext, token string) (uint64, error) {
+func parseToken(c *lgo.CustomContext, token string) (uint64, error) {
 	var err error
-	claims, err := cc.JWT.Parse(token)
+	claims, err := c.JWT.Parse(token)
 	if err != nil {
 		return 0, err
 	}

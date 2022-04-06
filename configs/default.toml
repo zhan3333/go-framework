@@ -1,6 +1,5 @@
 [app]
 name = "go-framework"
-env = "local"
 debug = true
 url = "127.0.0.1:8080"
 
@@ -27,5 +26,5 @@ port = 6379
 database = 0
 
 [log]
-level = "debug"
-format = "text"
+level = "info"
+format = "json"

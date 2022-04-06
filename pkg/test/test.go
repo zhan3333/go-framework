@@ -33,12 +33,12 @@ func CreateTestResponseRecorder() *ResponseRecorder {
 	}
 }
 
-// NewUploaderContext 创建上下文
+// NewAPIContext 创建上下文
 //
 // 该 ctx 已经经过 middlewares.WithUploaderContext 中间件处理
 // 可以通过 uc.Request = http.NewRequest() 来更改请求对象，所需依赖均已注入
 // 可以通过 uc.Write 来获取响应对象
-func NewUploaderContext(dep *lgo.Dependencies) *lgo.CustomContext {
+func NewAPIContext(dep *lgo.Dependencies) *lgo.CustomContext {
 	rec := CreateTestResponseRecorder()
 	c, _ := gin.CreateTestContext(rec)
 	c.Request = httptest.NewRequest(http.MethodPost, "/", nil)
@@ -47,15 +47,15 @@ func NewUploaderContext(dep *lgo.Dependencies) *lgo.CustomContext {
 }
 
 // NewMiddlewareTest 创建中间件测试
-// rec 用于测试中间件 abort
+// rec 已绑定到 context 中，可以直接断言响应
 // 未注入不需要的依赖，中间件应当在创建时手动传入依赖
-func NewMiddlewareTest() (uc *lgo.CustomContext, rec *ResponseRecorder) {
+func NewMiddlewareTest() (cc *lgo.CustomContext, rec *ResponseRecorder) {
 	rec = CreateTestResponseRecorder()
 	c, _ := gin.CreateTestContext(rec)
 	c.Request = httptest.NewRequest(http.MethodPost, "/", nil)
-	uc = &lgo.CustomContext{Context: c}
-	c.Set(lgo.CustomContextKey, uc)
-	return uc, rec
+	cc = &lgo.CustomContext{Context: c, Dependencies: &lgo.Dependencies{}}
+	c.Set(lgo.CustomContextKey, cc)
+	return cc, rec
 }
 
 // NewHTTPTest 创建 http 测试需要的 req、resp
