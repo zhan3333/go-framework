@@ -1,9 +1,13 @@
 package cmd
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/jedib0t/go-pretty/table"
 	"github.com/spf13/cobra"
+	"github.com/swaggo/swag"
 	"os"
+	"strings"
 )
 
 // routeCmd represents the route command
@@ -16,32 +20,60 @@ func init() {
 	rootCmd.AddCommand(routeCmd)
 	routeCmd.AddCommand(routeListCmd)
 
-	// Here you will define your flags and configuration settings.
+	doc, err := swag.ReadDoc()
+	if err != nil {
+		fmt.Println("read swag doc failed: ", err)
+		os.Exit(1)
+	}
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// routeCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// routeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	err = json.Unmarshal([]byte(doc), &si)
+	if err != nil {
+		fmt.Println("unmarshal swag doc failed: ", err)
+		os.Exit(1)
+	}
 }
 
 var routeListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "显示路由列表",
+	Long:  `显示路由列表, summary、description 依赖 swagger 文档`,
 	Run: func(cmd *cobra.Command, args []string) {
 		routes := booted.Server.Routes()
 		t := table.NewWriter()
 		t.SetOutputMirror(os.Stderr)
-		t.AppendHeader(table.Row{"name", "method", "path", "comment", "handler"})
+		t.AppendHeader(table.Row{"summary", "method", "path", "description", "handler"})
 		t.AppendRows(func() []table.Row {
 			var rows []table.Row
 			for _, route := range routes {
-				rows = append(rows, table.Row{"", route.Method, route.Path, "", route.Handler})
+				ri := getSwagInfo(strings.ToLower(route.Method), strings.ToLower(route.Path))
+				rows = append(rows, table.Row{ri.Summary, route.Method, route.Path, ri.Description, route.Handler})
 			}
 			return rows
 		}())
 		t.Render()
 	},
+}
+
+var si swagInfo
+
+type swagInfo struct {
+	Paths map[string]map[string]RouteInfo `json:"paths"`
+}
+
+type RouteInfo struct {
+	Description string `json:"description"`
+	Summary     string `json:"summary"`
+}
+
+func getSwagInfo(method string, path string) RouteInfo {
+	if si.Paths == nil {
+		return RouteInfo{}
+	}
+	if _, ok := si.Paths[path]; !ok {
+		return RouteInfo{}
+	}
+	if _, ok := si.Paths[path][method]; !ok {
+		return RouteInfo{}
+	}
+	return si.Paths[path][method]
 }

@@ -10,20 +10,21 @@
         "version": "1.0"
     },
     "paths": {
-        "/api/users": {
+        "/api/v1/auth/login": {
             "post": {
+                "description": "登录",
                 "produces": [
                     "application/json"
                 ],
-                "summary": "创建新用户",
+                "summary": "登录",
                 "parameters": [
                     {
-                        "description": "注册信息",
+                        "description": "登录",
                         "name": "user",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/requests.UserStoreRequest"
+                            "$ref": "#/definitions/auth.LoginReq"
                         }
                     }
                 ],
@@ -31,7 +32,61 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/responses.Response"
+                            "$ref": "#/definitions/auth.LoginResp"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/register": {
+            "post": {
+                "description": "注册新用户",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "注册新用户",
+                "parameters": [
+                    {
+                        "description": "注册信息",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/auth.RegisterReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/me": {
+            "get": {
+                "description": "获取当前登录用户信息",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取当前登录用户信息",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "accessToken",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/auth.MeResp"
                         }
                     }
                 }
@@ -39,7 +94,50 @@
         }
     },
     "definitions": {
-        "requests.UserStoreRequest": {
+        "auth.LoginReq": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.LoginResp": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "expires_at": {
+                    "type": "integer"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.MeResp": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "auth.RegisterReq": {
             "type": "object",
             "required": [
                 "email",
@@ -58,20 +156,6 @@
                 "password": {
                     "type": "string",
                     "example": "123456"
-                }
-            }
-        },
-        "responses.Response": {
-            "type": "object",
-            "properties": {
-                "body": {
-                    "type": "object"
-                },
-                "code": {
-                    "type": "integer"
-                },
-                "message": {
-                    "type": "string"
                 }
             }
         }

@@ -1,5 +1,33 @@
 definitions:
-  requests.UserStoreRequest:
+  auth.LoginReq:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  auth.LoginResp:
+    properties:
+      access_token:
+        type: string
+      expires_at:
+        type: integer
+      type:
+        type: string
+    type: object
+  auth.MeResp:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  auth.RegisterReq:
     properties:
       email:
         example: admin@go-framework.com
@@ -15,15 +43,6 @@ definitions:
     - name
     - password
     type: object
-  responses.Response:
-    properties:
-      body:
-        type: object
-      code:
-        type: integer
-      message:
-        type: string
-    type: object
 info:
   contact: {}
   description: gin framework
@@ -32,21 +51,57 @@ info:
   title: go-framework
   version: "1.0"
 paths:
-  /api/users:
+  /api/v1/auth/login:
     post:
+      description: 登录
       parameters:
-      - description: 注册信息
+      - description: 登录
         in: body
         name: user
         required: true
         schema:
-          $ref: '#/definitions/requests.UserStoreRequest'
+          $ref: '#/definitions/auth.LoginReq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/responses.Response'
-      summary: 创建新用户
+            $ref: '#/definitions/auth.LoginResp'
+      summary: 登录
+  /api/v1/auth/register:
+    post:
+      description: 注册新用户
+      parameters:
+      - description: 注册信息
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RegisterReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: 注册新用户
+  /api/v1/me:
+    get:
+      description: 获取当前登录用户信息
+      parameters:
+      - description: accessToken
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/auth.MeResp'
+      summary: 获取当前登录用户信息
 swagger: "2.0"

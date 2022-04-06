@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 
 	"go-framework/internal/domain/user"
@@ -9,11 +8,13 @@ import (
 	"go-framework/pkg/lgo"
 )
 
-// Register @Summary 注册新用户
+// Register godoc
+// @Summary 注册新用户
+// @Description 注册新用户
 // @Produce  json
 // @Param user body RegisterReq true "注册信息"
 // @Success 200 {string} default
-// @Router /api/auth/register [post]
+// @Router /api/v1/auth/register [post]
 func Register(c *lgo.CustomContext) error {
 	var (
 		req RegisterReq
@@ -40,11 +41,13 @@ func Register(c *lgo.CustomContext) error {
 	return c.OK()
 }
 
-// Login @Summary 登录
+// Login godoc
+// @Summary 登录
+// @Description 登录
 // @Produce  json
 // @Param user body LoginReq true "登录"
 // @Success 200 {object} LoginResp
-// @Router /api/auth/login [post]
+// @Router /api/v1/auth/login [post]
 func Login(c *lgo.CustomContext) error {
 	var (
 		req LoginReq
@@ -74,6 +77,19 @@ func Login(c *lgo.CustomContext) error {
 	}
 }
 
+type MeResp struct {
+	Name  string `json:"name"`
+	ID    uint64 `json:"id"`
+	Email string `json:"email"`
+}
+
+// Me godoc
+// @Summary 获取当前登录用户信息
+// @Description 获取当前登录用户信息
+// @Produce  json
+// @Param Authorization header string true "accessToken"
+// @Success 200 {object} MeResp
+// @Router /api/v1/me [get]
 func Me(c *lgo.CustomContext) error {
 	u, err := c.NewUser().First(c.UserID)
 	if err != nil {
@@ -82,9 +98,9 @@ func Me(c *lgo.CustomContext) error {
 	if u == nil {
 		return c.Unauthorized("用户不存在")
 	}
-	return c.OK(gin.H{
-		"name":  u.Name,
-		"id":    u.ID,
-		"email": u.Email,
+	return c.OK(MeResp{
+		Name:  u.Name,
+		ID:    uint64(u.ID),
+		Email: u.Email,
 	})
 }
