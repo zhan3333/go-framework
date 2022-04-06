@@ -76,6 +76,7 @@ go run main.go server --config=configs/local.toml
 - [] kafka 消息队列
 - [x] 升级到 go1.18
 - [x] 使用 cobra 创建命令行工具
+- [] github Action CI
 
 ## 相关文档
 

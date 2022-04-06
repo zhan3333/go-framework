@@ -26,9 +26,6 @@ func (b *Booted) Destroy() {
 	if b == nil {
 		return
 	}
-	if b.Redis != nil {
-		_ = b.Redis.Close()
-	}
 }
 
 type Options struct {
